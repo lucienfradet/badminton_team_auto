@@ -1,0 +1,7 @@
+#addPlayerForm {
+  display: none; /* Hide the form by default */
+}
+
+.toggle-buttons {
+  margin: 10px 15px; /* Adjust as needed */
+}
