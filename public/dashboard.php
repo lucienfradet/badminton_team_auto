@@ -63,7 +63,7 @@ $file_db = null; // Close database connection
     <!-- Display already added players -->
     <div id="players-container"></div> 
 
-    <button id="togglePlayerList" class="toggle-buttons">Hide Players</button>
+    <button id="togglePlayerList" class="toggle-buttons">Show Player List</button>
 
     <div id="addPlayer-container">
       <!-- Button to toggle the form -->
@@ -79,6 +79,27 @@ $file_db = null; // Close database connection
 
           <button type="submit" name="addPlayer">Add Player</button>
       </form>
+    </div>
+
+    <div id="generate-teams-container">
+      <h2>Generate Teams</h2>
+      <form id="generateTeamsForm" action="generate_teams.php" method="post">
+        <label for="numCourts">Number of Courts:</label>
+        <input type="number" name="numCourts" id="numCourts" min="1" value="1" required>
+
+        <label>Algorithm Selection:</label>
+        <input type="radio" name="algorithm" value="random" checked> Random
+        <input type="radio" name="algorithm" value="matchLevel"> Match Level
+
+        <button id="generateTeamsButton" type="button">Generate Team</button>
+        <button id="sessionDeleteButton" type="button">Delete Active Session</button>
+        <p>Session in progress? 
+        <span id="session-active-flag">None</span>
+        </p>
+      </form>
+      <div id="teams-container">
+        
+      </div>
     </div>
 </body>
 

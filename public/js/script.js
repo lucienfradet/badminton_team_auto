@@ -8,7 +8,13 @@ $(document).ready(function() {
 
   $('#togglePlayerList').on('click', function () {
     $('#players-container').toggle(); 
+    // Update button text based on the visibility state
+    let buttonText = $('#players-container').is(':visible') ? 'Hide Player List' : 'Show Player List';
+    $(this).text(buttonText);
   })
+
+  //hide by default
+  $('#players-container').hide();
 
   // Perform AJAX request to fetch players
   $.ajax({
@@ -48,6 +54,7 @@ $(document).ready(function() {
             success: function(response) {
                 // Handle success
                 console.log('Player state updated successfully');
+                console.log(response);
             },
             error: function(error) {
                 // Handle error
@@ -127,6 +134,7 @@ $(document).ready(function() {
                   // Handle success (e.g., remove the div from the container)
                   console.log(response);
                   console.log('Player modified successfully');
+                  location.reload(true);
                 },
                 error: function(error) {
                   // Handle error
@@ -147,4 +155,93 @@ $(document).ready(function() {
       console.log(jqXHR.responseText); // Log the full responseText
     }
   });
+
+  $("#generateTeamsButton").click(function () {
+    // Serialize the form data
+    let formData = $("#generateTeamsForm").serialize();
+
+    // Send an AJAX request
+    $.ajax({
+      type: "POST",
+      url: "generate_teams.php",
+      data: formData,
+      success: function (response) {
+        // Display the response in the teams-container div
+        $("#session-active-flag").text("YES!"); 
+        console.log(response);
+
+        // Clear the existing content in teams-container
+        $("#teams-container").empty();
+
+        // Create divs for each court and teams
+        let counter = 0;
+        for (let i = 1; i <= response['courtNumber']; i++) {
+          // Create a div for the court
+          let courtDiv = $("<div>").addClass("court").appendTo("#teams-container");
+          // Create divs for each team in the court
+          for (let j = 1; j <= 2; j++) {
+            let teamDiv = $("<div>").addClass("team").appendTo(courtDiv);
+            
+            let team = undefined;
+            if (counter < response.teams.length) {
+              team = response.teams[counter];
+              //break out if the last team is not a team
+              if (team['player2'] == null) {
+                break;
+              }
+            } 
+            else {
+              break;
+            }
+              
+            // Append player1 and player2 to the team div
+            $("<p>").text("Player 1: " + team['player1']).appendTo(teamDiv);
+            $("<p>").text("Player 2: " + team['player2']).appendTo(teamDiv);
+            counter++;
+          }
+        }
+
+        if (counter < response.teams.length) {
+          let benchDiv = $("<div>").addClass("bench").appendTo("#teams-container");
+          for (let i = counter; i < response.teams.length; i++) {
+            $("<p>").text(response.teams[i]['player1']).appendTo(benchDiv);
+            $("<p>").text(response.teams[i]['player2']).appendTo(benchDiv);
+          }
+        } 
+
+      },
+      error: function (error) {
+        console.log("Error:", error);
+      }
+    });
+  });
+
+  $("#sessionDeleteButton").click(function () {
+    $.ajax({
+      type: "POST",
+      url: "resetTeamSession.php",
+      success: function (response) {
+        $("#session-active-flag").text("None"); 
+      },
+      error: function (error) {
+        console.log("Error:", error);
+      }
+    });
+  });
+
+  //check session state on page load
+  $.ajax({
+    type: "POST",
+    url: "checkSessionState.php",
+    success: function (response) {
+      console.log(response);
+      // Update button text based on the visibility state
+      let flagText = response['isEmpty'] ? 'None' : 'YES';
+      $('#session-active-flag').text(flagText);
+    },
+    error: function (error) {
+      console.log("Error:", error);
+    }
+  });
+
 });

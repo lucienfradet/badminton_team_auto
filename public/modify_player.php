@@ -1,4 +1,7 @@
 <?php
+
+use http\Header;
+
 session_start();
 require('openDB.php');
 
@@ -35,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'rowCount' => $stmt->rowCount(),
         ];
         echo json_encode($response);
+
     } catch (PDOException $e) {
         // Log or handle the error
         echo json_encode(['error' => 'Error modifying player in php: ' . $e->getMessage()]);

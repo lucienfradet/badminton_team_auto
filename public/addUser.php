@@ -15,7 +15,8 @@
             id INTEGER PRIMARY KEY NOT NULL,
             timeStamp TEXT,
             username TEXT,
-            password TEXT
+            password TEXT,
+            team_array TEXT
         )
     ";
     $file_db->exec($queryCreateTableDebut);
@@ -25,7 +26,8 @@
             id INTEGER PRIMARY KEY NOT NULL,
             timeStamp TEXT,
             username TEXT,
-            password TEXT
+            password TEXT,
+            team_array TEXT
         )
     ";
     $file_db->exec($queryCreateTableInter);
@@ -35,7 +37,8 @@
             id INTEGER PRIMARY KEY NOT NULL,
             timeStamp TEXT,
             username TEXT,
-            password TEXT
+            password TEXT,
+            team_array TEXT
         )
     ";
     $file_db->exec($queryCreateTableAdvan);
