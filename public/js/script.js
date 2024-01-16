@@ -206,6 +206,23 @@ $(document).ready(function() {
           for (let i = counter; i < response.teams.length; i++) {
             $("<p>").text(response.teams[i]['player1']).appendTo(benchDiv);
             $("<p>").text(response.teams[i]['player2']).appendTo(benchDiv);
+            //add bench players to db if not already in empty team
+            if (response.teams[i]['player2'] !== null) {
+              $.ajax({
+                type: "POST",
+                url: "addBenchPlayers.php",
+                data: {
+                  player1: response.teams[i]['player1'],
+                  player2: response.teams[i]['player2']
+                },
+                success: function (result) {
+                  console.log("Data added to team_array successfully:", result);
+                },
+                error: function (error) {
+                  console.log("Error adding data to team_array:", error);
+                }
+              });
+            }
           }
         } 
 

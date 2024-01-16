@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $players = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // fetch previous teams
-
     $queryFetchTeamArray = "
       SELECT team_array
       FROM " . $tablename . "
@@ -48,53 +47,117 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $existingTeams = json_decode($existingTeamArray, true);
 
     // !!!!!!!!!!!!!!!! TEAM CREATION !!!!!!!!!!!!!!!!!!!!!
-    $numItterations = 1000;
-    $teamsArray = [];
 
-    // Create many teams distributions
-    for ($i = 0; $i < $numItterations; $i++) {
-      shuffle($players);
-      $teams = [];
-      for ($j = 0; $j < count($players); $j += 2) {
-        $team = [
-            'player1' => $players[$j]['name'],
-            'player2' => ($j + 1 < count($players)) ? $players[$j + 1]['name'] : null
-        ];
-        // Store the team composition in the $teams array
-        $teams[] = $team;
+    // !!!!!!!!!! RANDOM AGLO !!!!!!!!!!!!!!!
+    if ($algorithm === "random") {
+      $numItterations = 1000;
+      $teamsArray = [];
+
+      // Create many teams distributions
+      for ($i = 0; $i < $numItterations; $i++) {
+        shuffle($players);
+        $teams = [];
+        for ($j = 0; $j < count($players); $j += 2) {
+          $team = [
+              'player1' => $players[$j]['name'],
+              'player2' => ($j + 1 < count($players)) ? $players[$j + 1]['name'] : null
+          ];
+          // Store the team composition in the $teams array
+          $teams[] = $team;
+        }
+        $teamsArray[] = $teams;
       }
-      $teamsArray[] = $teams;
-    }
-    
-    // test the teams with existing previous teams
-    $index = 0;
-    $selectedIndex = 0;
-    $previousBestScore = 0;
-    foreach ($teamsArray as $teams) {
-      $score = 0;
-      foreach ($teams as $team) {
-        if (is_array($existingTeams) and count($existingTeams) > 0) {
-          foreach ($existingTeams as $existingTeam) {
-            if (is_array($existingTeam)) {
-              // Compare the teams and increment the counter if they are the same (regardless of order)
-              if (
-                  ($team['player1'] === $existingTeam['player1'] && $team['player2'] === $existingTeam['player2']) ||
-                  ($team['player1'] === $existingTeam['player2'] && $team['player2'] === $existingTeam['player1'])
-              ) {
-                  $score++;
+      
+      // test the teams with existing previous teams
+      $index = 0;
+      $selectedIndex = 0;
+      $previousBestScore = 0;
+      foreach ($teamsArray as $teams) {
+        $score = 0;
+        foreach ($teams as $team) {
+          if (is_array($existingTeams) and count($existingTeams) > 0) {
+            foreach ($existingTeams as $existingTeam) {
+              if (is_array($existingTeam)) {
+                // Compare the teams and increment the counter if they are the same (regardless of order)
+                if (
+                    ($team['player1'] === $existingTeam['player1'] && $team['player2'] === $existingTeam['player2']) ||
+                    ($team['player1'] === $existingTeam['player2'] && $team['player2'] === $existingTeam['player1'])
+                ) {
+                    $score++;
+                }
+                // check if a team member was alone before
+                if (
+                    $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
+                ) {
+                    $score += 2;
+                }
               }
             }
           }
         }
+        if ($score < $previousBestScore) {
+          $selectedIndex = $index;
+          $previousBestScore = $score;
+        }
+        $index++;
       }
-      if ($score < $previousBestScore) {
-        $selectedIndex = $index;
-        $previousBestScore = $score;
-      }
-      $index++;
+      
+      $teams = $teamsArray[$selectedIndex];
     }
-    
-    $teams = $teamsArray[$selectedIndex];
+
+    // !!!!!!!!!! MATCH LEVEL ALGO !!!!!!!!!!!!!!
+    if (strcasecmp($algorithm, "Match Level") === 0) {
+      $numItterations = 3000;
+      $teamsArray = [];
+
+      // Create many teams distributions
+      for ($i = 0; $i < $numItterations; $i++) {
+        shuffle($players);
+        $teams = [];
+        for ($j = 0; $j < count($players); $j += 2) {
+          $team = [
+            'player1' => [
+              'name' => $players[$j]['name'],
+              'level' => $players[$j]['level']
+            ],
+            'player2' => ($j + 1 < count($players)) ? [
+              'name' => $players[$j + 1]['name'],
+              'level' => $players[$j + 1]['level']
+            ] : null
+          ];
+          // Store the team composition in the $teams array
+          $teams[] = $team;
+        }
+        $teamsArray[] = $teams;
+      }
+      
+      // test the teams with existing previous teams
+      $index = 0;
+      $selectedIndex = 0;
+      $previousBestScore = 0;
+      foreach ($teamsArray as $teams) {
+        $score = 0;
+        foreach ($teams as $team) {
+          //increase score with level difference
+          if ($team['player1']['level'] !== null && $team['player2']['level'] !== null) {
+            $score += max(0, abs($team['player1']['level'] - $team['player2']['level']));
+          }
+          // check if a team member was alone before
+          if (
+              $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
+          ) {
+              $score += 8;
+          }
+        }
+        if ($score < $previousBestScore) {
+          $selectedIndex = $index;
+          $previousBestScore = $score;
+        }
+        $index++;
+      }
+      
+      $teams = $teamsArray[$selectedIndex];
+    }
 
     // add team into team_array of db
     if (is_array($existingTeams)) {
