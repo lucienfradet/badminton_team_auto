@@ -1,9 +1,23 @@
+/**
+ * TODO:
+ *  - make it so changing algorithm resets the session
+ *  - Make the login page safe and make sure all the pages are secure and can't be accesed without using ajax
+ *  - Deploy using ngnix and docker
+ *
+ *  - Restarting the db and creating users for the different groups with passwords
+ *  - beautifying the page
+ *
+ */
+
 let playerData = [];
 
 $(document).ready(function() {
   // Toggle the visibility of the form on button click
   $('#toggleAddPlayerForm').on('click', function() {
     $('#addPlayerForm').toggle();
+    // Update button text based on the visibility state
+    let buttonText = $('#addPlayerForm').is(':visible') ? 'Hide new player form' : 'Add New Player';
+    $(this).text(buttonText);
   });
 
   $('#togglePlayerList').on('click', function () {

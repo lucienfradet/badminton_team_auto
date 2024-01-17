@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // !!!!!!!!!! MATCH LEVEL ALGO !!!!!!!!!!!!!!
-    if (strcasecmp($algorithm, "Match Level") === 0) {
+    if (strcasecmp($algorithm, "matchLevel") === 0) {
       $numItterations = 3000;
       $teamsArray = [];
 
@@ -114,19 +114,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       for ($i = 0; $i < $numItterations; $i++) {
         shuffle($players);
         $teams = [];
+
         for ($j = 0; $j < count($players); $j += 2) {
-          $team = [
-            'player1' => [
-              'name' => $players[$j]['name'],
-              'level' => $players[$j]['level']
-            ],
-            'player2' => ($j + 1 < count($players)) ? [
-              'name' => $players[$j + 1]['name'],
-              'level' => $players[$j + 1]['level']
-            ] : null
-          ];
-          // Store the team composition in the $teams array
-          $teams[] = $team;
+          if (is_array($existingTeams)) {
+            $team = [
+              'player1' => [
+                'name' => $players[$j]['name'],
+                'level' => $players[$j]['level']
+              ],
+              'player2' => ($j + 1 < count($players)) ? [
+                'name' => $players[$j + 1]['name'],
+                'level' => $players[$j + 1]['level']
+              ] : null
+            ];
+            // Store the team composition in the $teams array
+            $teams[] = $team;
+          }
         }
         $teamsArray[] = $teams;
       }
@@ -156,11 +159,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $index++;
       }
       
-      $teams = $teamsArray[$selectedIndex];
+      $teamsRaw = $teamsArray[$selectedIndex];
+      //convert teams to only player name
+      $teams = [];
+      foreach ($teamsRaw as $teamRaw) {
+        $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
+        $teams[] = $team;
+      }
     }
 
+
     // add team into team_array of db
-    if (is_array($existingTeams)) {
+    if (isset($existingTeams) && is_array($existingTeams)) {
       $combinedTeams = array_merge($existingTeams, $teams);
     }
     else {
