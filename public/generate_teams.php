@@ -49,124 +49,213 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // !!!!!!!!!!!!!!!! TEAM CREATION !!!!!!!!!!!!!!!!!!!!!
 
     // !!!!!!!!!! RANDOM AGLO !!!!!!!!!!!!!!!
-    if ($algorithm === "random") {
-      $numItterations = 1000;
-      $teamsArray = [];
-
-      // Create many teams distributions
-      for ($i = 0; $i < $numItterations; $i++) {
-        shuffle($players);
-        $teams = [];
-        for ($j = 0; $j < count($players); $j += 2) {
-          $team = [
-              'player1' => $players[$j]['name'],
-              'player2' => ($j + 1 < count($players)) ? $players[$j + 1]['name'] : null
-          ];
-          // Store the team composition in the $teams array
-          $teams[] = $team;
-        }
-        $teamsArray[] = $teams;
-      }
-      
-      // test the teams with existing previous teams
-      $index = 0;
-      $selectedIndex = 0;
-      $previousBestScore = 0;
-      foreach ($teamsArray as $teams) {
+    function calculateScoreRandom($newTeams, $existingTeams) {
         $score = 0;
-        foreach ($teams as $team) {
-          if (is_array($existingTeams) and count($existingTeams) > 0) {
+
+        foreach ($newTeams as $team) {
             foreach ($existingTeams as $existingTeam) {
-              if (is_array($existingTeam)) {
-                // Compare the teams and increment the counter if they are the same (regardless of order)
                 if (
                     ($team['player1'] === $existingTeam['player1'] && $team['player2'] === $existingTeam['player2']) ||
                     ($team['player1'] === $existingTeam['player2'] && $team['player2'] === $existingTeam['player1'])
                 ) {
                     $score++;
                 }
-                // check if a team member was alone before
+
                 if (
                     $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
                 ) {
-                    $score += 2;
+                    $score += 5;
                 }
-              }
             }
-          }
         }
-        if ($score < $previousBestScore) {
-          $selectedIndex = $index;
-          $previousBestScore = $score;
-        }
-        $index++;
-      }
-      
-      $teams = $teamsArray[$selectedIndex];
+
+        return $score;
     }
+    
+    if ($algorithm === "random") {
+      $numIterations = 1000;
+      $bestScore = PHP_INT_MAX;
+      $bestTeams = [];
 
-    // !!!!!!!!!! MATCH LEVEL ALGO !!!!!!!!!!!!!!
-    if (strcasecmp($algorithm, "matchLevel") === 0) {
-      $numItterations = 3000;
-      $teamsArray = [];
-
-      // Create many teams distributions
-      for ($i = 0; $i < $numItterations; $i++) {
+      for ($i = 0; $i < $numIterations; $i++) {
         shuffle($players);
         $teams = [];
 
         for ($j = 0; $j < count($players); $j += 2) {
-          if (is_array($existingTeams)) {
-            $team = [
-              'player1' => [
-                'name' => $players[$j]['name'],
-                'level' => $players[$j]['level']
-              ],
-              'player2' => ($j + 1 < count($players)) ? [
-                'name' => $players[$j + 1]['name'],
-                'level' => $players[$j + 1]['level']
-              ] : null
-            ];
-            // Store the team composition in the $teams array
-            $teams[] = $team;
-          }
+          $team = [
+            'player1' => $players[$j]['name'],
+            'player2' => ($j + 1 < count($players)) ? $players[$j + 1]['name'] : null
+          ];
+          $teams[] = $team;
         }
-        $teamsArray[] = $teams;
+
+        $score = calculateScoreRandom($teams, $existingTeams);
+
+        if ($score < $bestScore) {
+          $bestScore = $score;
+          $bestTeams = $teams;
+        }
       }
-      
-      // test the teams with existing previous teams
-      $index = 0;
-      $selectedIndex = 0;
-      $previousBestScore = 0;
-      foreach ($teamsArray as $teams) {
-        $score = 0;
-        foreach ($teams as $team) {
-          //increase score with level difference
-          if ($team['player1']['level'] !== null && $team['player2']['level'] !== null) {
-            $score += max(0, abs($team['player1']['level'] - $team['player2']['level']));
-          }
-          // check if a team member was alone before
-          if (
-              $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
-          ) {
-              $score += 8;
-          }
+
+      $teams = $bestTeams;
+    }
+
+    // !!!!!!!!!! MATCH LEVEL ALGO !!!!!!!!!!!!!!
+    function generateTeams($players, $existingTeams) {
+      $teams = [];
+
+      for ($j = 0; $j < count($players); $j += 2) {
+        if (is_array($existingTeams)) {
+          $team = [
+            'player1' => [
+              'name' => $players[$j]['name'],
+              'level' => $players[$j]['level']
+            ],
+            'player2' => ($j + 1 < count($players)) ? [
+              'name' => $players[$j + 1]['name'],
+              'level' => $players[$j + 1]['level']
+            ] : null
+          ];
+
+          $teams[] = $team;
         }
+      }
+
+      return $teams;
+    }
+
+    function selectBestTeams($teamsArray, $existingTeams) {
+      $selectedIndex = 0;
+      $previousBestScore = PHP_INT_MAX;
+
+      foreach ($teamsArray as $index => $teams) {
+        $score = calculateScoreMatchLevel($teams, $existingTeams);
+
         if ($score < $previousBestScore) {
           $selectedIndex = $index;
           $previousBestScore = $score;
         }
-        $index++;
       }
-      
-      $teamsRaw = $teamsArray[$selectedIndex];
-      //convert teams to only player name
+
+      return $selectedIndex;
+    }
+
+    function calculateScoreMatchLevel($teams, $existingTeams) {
+      $score = 0;
+
+      foreach ($teams as $team) {
+        if ($team['player2'] !== null && $team['player1'] !== null) {
+          if ($team['player1']['level'] !== null && $team['player2']['level'] !== null) {
+            $score += max(0, abs($team['player1']['level'] - $team['player2']['level']));
+          }
+        }
+        
+        foreach ($existingTeams as $existingTeam) {
+          if (
+          $team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === null && $existingTeam['player2'] === null
+          ) {
+            $score += 12;
+            //HERE
+          }
+        }
+      }
+
+      return $score;
+    }
+
+    function convertTeams($teamsRaw) {
       $teams = [];
+
       foreach ($teamsRaw as $teamRaw) {
         $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
         $teams[] = $team;
       }
+
+      return $teams;
     }
+
+    if ($algorithm === "matchLevel") {
+      $numIterations = 3000;
+      $selectedTeams = [];
+
+      // Create many teams distributions
+      for ($i = 0; $i < $numIterations; $i++) {
+        shuffle($players);
+        $teams = generateTeams($players, $existingTeams);
+
+        $teamsArray[] = $teams;
+      }
+
+      // Test the teams with existing previous teams
+      $selectedIndex = selectBestTeams($teamsArray, $existingTeams);
+
+      $teamsRaw = $teamsArray[$selectedIndex];
+
+      // Convert teams to only player names
+      $teams = convertTeams($teamsRaw);
+    }
+
+    // if (strcasecmp($algorithm, "matchLevel") === 0) {
+    //   $numItterations = 3000;
+    //   $teamsArray = [];
+    //
+    //   // Create many teams distributions
+    //   for ($i = 0; $i < $numItterations; $i++) {
+    //     shuffle($players);
+    //     $teams = [];
+    //
+    //     for ($j = 0; $j < count($players); $j += 2) {
+    //       if (is_array($existingTeams)) {
+    //         $team = [
+    //           'player1' => [
+    //             'name' => $players[$j]['name'],
+    //             'level' => $players[$j]['level']
+    //           ],
+    //           'player2' => ($j + 1 < count($players)) ? [
+    //             'name' => $players[$j + 1]['name'],
+    //             'level' => $players[$j + 1]['level']
+    //           ] : null
+    //         ];
+    //         // Store the team composition in the $teams array
+    //         $teams[] = $team;
+    //       }
+    //     }
+    //     $teamsArray[] = $teams;
+    //   }
+    //   
+    //   // test the teams with existing previous teams
+    //   $index = 0;
+    //   $selectedIndex = 0;
+    //   $previousBestScore = 0;
+    //   foreach ($teamsArray as $teams) {
+    //     $score = 0;
+    //     foreach ($teams as $team) {
+    //       //increase score with level difference
+    //       if ($team['player1']['level'] !== null && $team['player2']['level'] !== null) {
+    //         $score += max(0, abs($team['player1']['level'] - $team['player2']['level']));
+    //       }
+    //       // check if a team member was alone before
+    //       if (
+    //           $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
+    //       ) {
+    //           $score += 8;
+    //       }
+    //     }
+    //     if ($score < $previousBestScore) {
+    //       $selectedIndex = $index;
+    //       $previousBestScore = $score;
+    //     }
+    //     $index++;
+    //   }
+    //   
+    //   $teamsRaw = $teamsArray[$selectedIndex];
+    //   //convert teams to only player name
+    //   $teams = [];
+    //   foreach ($teamsRaw as $teamRaw) {
+    //     $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
+    //     $teams[] = $team;
+    //   }
+    // }
 
 
     // add team into team_array of db
@@ -184,9 +273,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       WHERE username = :username
     ";
 
+    $combineTeamsEncoded = json_encode($combinedTeams);
+
     $stmt = $file_db->prepare($updateTeamQuery);
     $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':teamArray', json_encode($combinedTeams));
+    $stmt->bindParam(':teamArray', $combineTeamsEncoded);
     $stmt->execute();
 
     // Send JSON response

@@ -11,29 +11,47 @@ function debug_to_console($data) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $enteredUsername = $_POST['username'];
-    $enteredPassword = $_POST['password'];
+    // Sanitize and validate user input
+    $enteredUsername = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $enteredPassword = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
-    $tables = ['group_debut', 'group_inter', 'group_advan'];
+    if (empty($enteredUsername) || empty($enteredPassword)) {
+        // Invalid input, handle the error
+        echo "Invalid username or password";
+        exit();
+    }
 
-    foreach ($tables as $table) {
+    // Check if the table exists with the entered username
+    $checkTableQuery = "
+        SELECT name FROM sqlite_master
+        WHERE type='table' AND name=:username
+    ";
+
+    $stmt = $file_db->prepare($checkTableQuery);
+    $stmt->bindParam(':username', $enteredUsername, PDO::PARAM_STR);
+    $stmt->execute();
+
+    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        // Table exists, now check the hashed password
         $query = "
-            SELECT * FROM $table
-            WHERE username=:username AND password=:password
+            SELECT * FROM $enteredUsername
+            WHERE username=:username
         ";
 
         $stmt = $file_db->prepare($query);
         $stmt->bindParam(':username', $enteredUsername, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $enteredPassword, PDO::PARAM_STR);
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Match found, start session
-            $_SESSION['username'] = $enteredUsername;
-            $_SESSION['table'] = $table;
-            echo "Login successful!";
-            header('Location: dashboard.php'); // Redirect to dashboard or any other page
-            exit();
+            // Compare hashed password
+            if (password_verify($enteredPassword, $row['password'])) {
+                // Match found, start session
+                $_SESSION['username'] = $enteredUsername;
+                $_SESSION['table'] = $enteredUsername;
+                echo "Login successful!";
+                header('Location: dashboard.php'); // Redirect to dashboard or any other page
+                exit();
+            }
         }
     }
 

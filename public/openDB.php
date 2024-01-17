@@ -11,7 +11,11 @@ try {
                             PDO::ERRMODE_EXCEPTION);
    }
 catch(PDOException $e) {
-    // Print PDOException message
-    echo $e->getMessage();
+    // Log the error to a secure log file
+    error_log('Database connection error: ' . $e->getMessage());
+
+    // Display a generic error message to the user
+    echo 'An unexpected error occurred. Please try again later.';
+    exit();
 }
 ?>

@@ -1,6 +1,6 @@
 /**
  * TODO:
- *  - make it so changing algorithm resets the session
+ *  OK make it so changing algorithm resets the session
  *  - Make the login page safe and make sure all the pages are secure and can't be accesed without using ajax
  *  - Deploy using ngnix and docker
  *
@@ -255,6 +255,23 @@ $(document).ready(function() {
         $("#session-active-flag").text("None"); 
       },
       error: function (error) {
+        console.log("Error:", error);
+      }
+    });
+  });
+
+  //Reset session if algorithm is changed
+  //Maybe this shouldn't be the case?
+  $('input[name="algorithm"]').change(function() {
+    // Make an AJAX post request
+    $.ajax({
+      type: 'POST',
+      url: "resetTeamSession.php",
+      success: function(response) {
+        console.log(response);
+        $('#session-active-flag').text("None");
+      },
+      error: function(error) {
         console.log("Error:", error);
       }
     });

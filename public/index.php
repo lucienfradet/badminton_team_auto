@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +15,7 @@
 <body>
 
     <header>
-        <h1 id="title">Connect to a database</h1>
+        <h1 id="title">Connect to Badminton Team Builder</h1>
         <!-- Add navigation or other header content here -->
     </header>
 
@@ -31,18 +29,13 @@
 
           <button type="submit">Login</button>
         </form>
-        <!-- Your main content goes here -->
-        <?php
-        // Your PHP code goes here
-        ?>
+
     </main>
+    <!-- Button to navigate to the registration page -->
+    <a href="register.php"><button>Register</button></a>
 
-    <footer>
-        <!-- Your footer content goes here -->
-    </footer>
-
-    <!-- You can include additional JavaScript files or scripts here -->
-
+    <!-- disabled version of the button -->
+    <!-- <a href="register.php"><button disabled>Register</button></a> -->
 </body>
 
   <!-- My script(s) -->
