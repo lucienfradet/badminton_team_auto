@@ -154,8 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           if (
           $team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === null && $existingTeam['player2'] === null
           ) {
-            $score += 12;
-            //HERE
+            $score += 8;
           }
         }
       }
@@ -177,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($algorithm === "matchLevel") {
       $numIterations = 3000;
       $selectedTeams = [];
+      $teamsArray = [];
 
       // Create many teams distributions
       for ($i = 0; $i < $numIterations; $i++) {
@@ -194,69 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Convert teams to only player names
       $teams = convertTeams($teamsRaw);
     }
-
-    // if (strcasecmp($algorithm, "matchLevel") === 0) {
-    //   $numItterations = 3000;
-    //   $teamsArray = [];
-    //
-    //   // Create many teams distributions
-    //   for ($i = 0; $i < $numItterations; $i++) {
-    //     shuffle($players);
-    //     $teams = [];
-    //
-    //     for ($j = 0; $j < count($players); $j += 2) {
-    //       if (is_array($existingTeams)) {
-    //         $team = [
-    //           'player1' => [
-    //             'name' => $players[$j]['name'],
-    //             'level' => $players[$j]['level']
-    //           ],
-    //           'player2' => ($j + 1 < count($players)) ? [
-    //             'name' => $players[$j + 1]['name'],
-    //             'level' => $players[$j + 1]['level']
-    //           ] : null
-    //         ];
-    //         // Store the team composition in the $teams array
-    //         $teams[] = $team;
-    //       }
-    //     }
-    //     $teamsArray[] = $teams;
-    //   }
-    //   
-    //   // test the teams with existing previous teams
-    //   $index = 0;
-    //   $selectedIndex = 0;
-    //   $previousBestScore = 0;
-    //   foreach ($teamsArray as $teams) {
-    //     $score = 0;
-    //     foreach ($teams as $team) {
-    //       //increase score with level difference
-    //       if ($team['player1']['level'] !== null && $team['player2']['level'] !== null) {
-    //         $score += max(0, abs($team['player1']['level'] - $team['player2']['level']));
-    //       }
-    //       // check if a team member was alone before
-    //       if (
-    //           $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
-    //       ) {
-    //           $score += 8;
-    //       }
-    //     }
-    //     if ($score < $previousBestScore) {
-    //       $selectedIndex = $index;
-    //       $previousBestScore = $score;
-    //     }
-    //     $index++;
-    //   }
-    //   
-    //   $teamsRaw = $teamsArray[$selectedIndex];
-    //   //convert teams to only player name
-    //   $teams = [];
-    //   foreach ($teamsRaw as $teamRaw) {
-    //     $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
-    //     $teams[] = $team;
-    //   }
-    // }
-
 
     // add team into team_array of db
     if (isset($existingTeams) && is_array($existingTeams)) {

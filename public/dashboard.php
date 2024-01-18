@@ -110,8 +110,8 @@ $file_db = null; // Close database connection
         <input type="number" name="numCourts" id="numCourts" min="1" value="1" required>
 
         <label>Algorithm Selection:</label>
-        <input type="radio" name="algorithm" value="random" checked> Random
-        <input type="radio" name="algorithm" value="matchLevel"> Match Level
+        <input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Random
+        <input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Match Level
 
         <button id="generateTeamsButton" type="button">Generate Team</button>
         <button id="sessionDeleteButton" type="button">Delete Active Session</button>

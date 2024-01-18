@@ -209,8 +209,8 @@ $(document).ready(function() {
             }
               
             // Append player1 and player2 to the team div
-            $("<p>").text("Player 1: " + team['player1']).appendTo(teamDiv);
-            $("<p>").text("Player 2: " + team['player2']).appendTo(teamDiv);
+            $("<p>").text(team['player1']).appendTo(teamDiv);
+            $("<p>").text(team['player2']).appendTo(teamDiv);
             counter++;
           }
         }
@@ -261,21 +261,20 @@ $(document).ready(function() {
   });
 
   //Reset session if algorithm is changed
-  //Maybe this shouldn't be the case?
-  $('input[name="algorithm"]').change(function() {
-    // Make an AJAX post request
-    $.ajax({
-      type: 'POST',
-      url: "resetTeamSession.php",
-      success: function(response) {
-        console.log(response);
-        $('#session-active-flag').text("None");
-      },
-      error: function(error) {
-        console.log("Error:", error);
-      }
-    });
-  });
+  // $('input[name="algorithm"]').change(function() {
+  //   // Make an AJAX post request
+  //   $.ajax({
+  //     type: 'POST',
+  //     url: "resetTeamSession.php",
+  //     success: function(response) {
+  //       console.log(response);
+  //       $('#session-active-flag').text("None");
+  //     },
+  //     error: function(error) {
+  //       console.log("Error:", error);
+  //     }
+  //   });
+  // });
 
   //check session state on page load
   $.ajax({
@@ -289,6 +288,41 @@ $(document).ready(function() {
     },
     error: function (error) {
       console.log("Error:", error);
+    }
+  });
+
+  // Update the algorithm selection when the user changes the radio button
+  $('input[name="algorithm"]').on('change', function () {
+    var newAlgorithm = $('input[name="algorithm"]:checked').val();
+
+    // Update the algorithm selection in the database
+    $.ajax({
+      type: 'POST',
+      url: 'update_algorithm_selection.php',
+      data: { algorithmSelection: newAlgorithm },
+      success: function (response) {
+        console.log('Algorithm selection updated successfully');
+      },
+      error: function (error) {
+        console.log('Error updating algorithm selection:', error);
+      }
+    });
+  });
+  
+  // Fetch current algorithm selection on page load
+  $.ajax({
+    type: 'GET',
+    url: 'get_algorithm_selection.php',
+    success: function (response) {
+      // Update the radio button based on the fetched algorithm selection
+      if (response.algorithmSelection === 'random') {
+        $('#randomAlgorithm').prop('checked', true);
+      } else if (response.algorithmSelection === 'matchLevel') {
+        $('#matchLevelAlgorithm').prop('checked', true);
+      }
+    },
+    error: function (error) {
+      console.log('Error fetching algorithm selection:', error);
     }
   });
 

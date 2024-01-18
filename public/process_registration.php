@@ -24,14 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     timestamp TEXT,
                     username TEXT,
                     password TEXT,
-                    team_array TEXT
+                    team_array TEXT,
+                    algorithm_selection TEXT
                 )
             ";
 
             $file_db->exec($createTableQuery);
 
             // Insert data into the newly created table
-            $insertIntoUserTableQuery = "INSERT INTO $newUsername (timestamp, username, password, team_array) VALUES (CURRENT_TIMESTAMP, :username, :password, '')";
+            $insertIntoUserTableQuery = "INSERT INTO $newUsername (timestamp, username, password, team_array, algorithm_selection) VALUES (CURRENT_TIMESTAMP, :username, :password, '', 'random')";
             $stmt = $file_db->prepare($insertIntoUserTableQuery);
             $stmt->bindParam(':username', $newUsername, PDO::PARAM_STR);
             $stmt->bindParam(':password', password_hash($newPassword, PASSWORD_DEFAULT), PDO::PARAM_STR);
