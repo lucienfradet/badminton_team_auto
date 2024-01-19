@@ -48,8 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Match found, start session
         $_SESSION['username'] = $enteredUsername;
         $_SESSION['table'] = $enteredUsername;
+        ob_start();
         echo "Login successful!";
         header('Location: dashboard.php'); // Redirect to dashboard or any other page
+        ob_end_flush();
         exit();
       }
     }
