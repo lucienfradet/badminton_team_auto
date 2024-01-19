@@ -76,7 +76,7 @@ $file_db = null; // Close database connection
     <!-- Add your styles here if needed -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- CSS stylesheet(s) -->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
 </head>
 <body>
 

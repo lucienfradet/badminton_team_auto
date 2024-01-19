@@ -14,7 +14,7 @@
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- Include additional CSS if needed -->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
 </head>
 
 <body>
