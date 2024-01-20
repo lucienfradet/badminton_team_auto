@@ -9,7 +9,8 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <!-- CSS stylesheet(s) -->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="css/style.css" /> -->
+    <?php include 'style_css.php'; ?>
 </head>
 
 <body>
@@ -39,6 +40,7 @@
 </body>
 
   <!-- My script(s) -->
-  <script src="js/script.js"></script>
+  <!-- <script src="js/script.js"></script> -->
+  <?php include 'script.js.php'; ?>
 
 </html>
