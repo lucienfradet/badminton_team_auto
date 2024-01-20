@@ -11,7 +11,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh; /* Ensure full viewport height */
-  margin: 0; /* Remove default body margin */
+  margin: 2vw; /* Remove default body margin */
   background-color: DarkSlateGrey;
 }
 
@@ -34,21 +34,21 @@ body {
   flex-direction: column;
   align-items: center;
   background-color: beige; /* Set background color for the dashboard content */
-  padding: 20px; /* Add padding for better spacing */
-  margin: 20px 0; /* Add top and bottom margin */
-  border-radius: 10px; /* Add rounded corners */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+  padding: 5vw; /* Add padding for better spacing */
+  margin: 5vw 0; /* Add top and bottom margin */
+  border-radius: 5vw; /* Add rounded corners */
+  box-shadow: 0 0 2vw rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
   overflow-y: auto;
   max-height: 95vh;
 }
 
 h2, p {
   text-align: center; /* Center text */
-  margin: 5px;
+  margin: 1vh;
 }
 
 .modify-player-input {
-  width: 85px;
+  width: 20vw;
 }
 
 .inner-container {
@@ -56,10 +56,10 @@ h2, p {
   flex-direction: column;
   align-items: center;
   background-color: beige; /* Set background color for the dashboard content */
-  padding: 3px; /* Add padding for better spacing */
-  margin-bottom: 8px;
-  border-radius: 10px; /* Add rounded corners */
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+  padding: 1vw; /* Add padding for better spacing */
+  margin-bottom: 2vw;
+  border-radius: 4vw; /* Add rounded corners */
+  box-shadow: 0 0 1vw rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
 }
 
 #addPlayerForm {
@@ -90,34 +90,35 @@ h2, p {
 .court {
   display: flex;
   flex-direction: row; /* Display children (teams and benches) in a row */
-  border: 1px solid DarkSlateGrey;
-  margin: 10px; /* Add margin for spacing between courts */
-  width: 250px;
+  border: 0.8vw solid DarkSlateGrey;
+  margin: 2vw; /* Add margin for spacing between courts */
+  width: 70vw;
 }
 
 /* Style for team divs inside the court */
 .team {
   flex: 1; /* Distribute space evenly among teams */
-  padding: 10px; /* Add padding inside the team div */
-  margin: 5px; /* Add margin for spacing between teams */
-  border-radius: 5px; /* Add rounded corners */
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5); /* Add a subtle box shadow */
+  padding: 3vw; /* Add padding inside the team div */
+  margin: 2vw; /* Add margin for spacing between teams */
+  border-radius: 2vw; /* Add rounded corners */
+  box-shadow: 0 0 1vw rgba(0, 0, 0, 0.5); /* Add a subtle box shadow */
 }
 
 /* Style for bench divs inside the court */
 .bench {
   flex: 1; /* Distribute space evenly among benches */
-  border: 1px solid DarkRed;
-  margin: 5px; /* Add margin for spacing between bench divs */
+  border: 0.8vw solid DarkRed;
+  margin: 5vw; /* Add margin for spacing between bench divs */
+  width: 40vw;
 }
 
 #players-container {
   max-height: 45vh;
-  max-width: 500px;
+  max-width: 85vw;
   overflow-x: hidden; /* Disable horizontal scrollbar */
   overflow-y: auto;
-  border: 1px solid DarkSlateGrey;
-  margin-top: 10px;
+  border: 0.2vw solid DarkSlateGrey;
+  margin-top: 1vw;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -126,8 +127,8 @@ h2, p {
 
 /* Customize the appearance of the horizontal scrollbar */
 #players-container::-webkit-scrollbar {
-  height: 8px; /* Set the height of the scrollbar */
-  width: 8px; /* Set the width of the scrollbar */
+  height: 2vh; /* Set the height of the scrollbar */
+  width: 2.5vw; /* Set the width of the scrollbar */
 }
 
 #players-container::-webkit-scrollbar-track {
@@ -136,16 +137,16 @@ h2, p {
 
 #players-container::-webkit-scrollbar-thumb {
   background-color: DarkSlateGrey; /* Set the color of the scrollbar thumb */
-  border-radius: 4px; /* Add rounded corners to the scrollbar thumb */
+  border-radius: 1.5vw; /* Add rounded corners to the scrollbar thumb */
 }
 
 .player-container {
   font-family: 'Helvetica', sans-serif;
-  padding: 1px;
+  padding: 0.5vw;
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
   width: 25%; /* Adjust the width for two columns with some spacing */
-  margin-bottom: 5px; /* Add margin between player-containers */
+  margin-bottom: 2vw; /* Add margin between player-containers */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -155,30 +156,30 @@ h2, p {
   display: flex;
   flex-direction: column;
   align-items: center; /* Align items to the start (left) of the container */
-  margin: 10px;
+  margin: 2vw;
 }
 
 #numCourts {
- width: 50px;
+ width: 10vw;
 }
 
 .generateTeamsForm-inner-container {
-  padding: 0 20px;
+  padding: 2vw;
 }
 
 /* Add your custom styles here for the logout button */
 #logout-container {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 2vh;
+  right: 0vh;
 }
 
 #logout-btn {
   background-color: #f44336;
   color: white;
-  padding: 10px;
+  padding: 3vw;
   border: none;
-  border-radius: 5px;
+  border-radius: 2vw;
   cursor: pointer;
 }
 </style>
