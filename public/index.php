@@ -63,7 +63,7 @@
 
       a button {
         display: block;
-        background-color: DarkSlateGrey;
+        background-color: lightGray;
         color: white;
         padding: 10px;
         border: none;
@@ -100,7 +100,7 @@
 
     </main>
     <!-- Button to navigate to the registration page -->
-    <a href="register.php"><button>Register</button></a>
+    <!-- <a href="register.php"><button>Register</button></a> -->
 
     <!-- disabled version of the button -->
     <!-- <a href="register.php"><button disabled>Register</button></a> -->
