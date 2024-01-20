@@ -14,7 +14,7 @@ $tablename = $_SESSION['table'];
 
 try {
     // Fetch the algorithm selection from the database
-    $query = "SELECT algorithm_selection FROM $tablename WHERE username = :username";
+    $query = "SELECT algorithm FROM users WHERE username = :username";
     $stmt = $file_db->prepare($query);
     $stmt->bindParam(':username', $username);
     $stmt->execute();
@@ -22,7 +22,7 @@ try {
 
     // Send JSON response with the algorithm selection
     header('Content-Type: application/json');
-    echo json_encode(['algorithmSelection' => $result['algorithm_selection']]);
+    echo json_encode(['algorithmSelection' => $result['algorithm']]);
 } catch (PDOException $e) {
     // Print PDOException message
     echo json_encode(['error' => 'Error fetching algorithm selection']);

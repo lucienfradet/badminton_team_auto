@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newAlgorithm = $_POST['algorithmSelection'];
 
         // Update the algorithm selection in the database
-        $query = "UPDATE $tablename SET algorithm_selection = :algorithmSelection WHERE username = :username";
+        $query = "UPDATE users SET algorithm = :algorithmSelection WHERE username = :username";
         $stmt = $file_db->prepare($query);
         $stmt->bindParam(':algorithmSelection', $newAlgorithm);
         $stmt->bindParam(':username', $username);

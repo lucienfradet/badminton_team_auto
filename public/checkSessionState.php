@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $queryFetchTeamArray = "
       SELECT team_array
-      FROM " . $tablename . "
+      FROM users
       WHERE username = :username
     ";
 

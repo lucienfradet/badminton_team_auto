@@ -21,39 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
   }
 
-  // Check if the table exists with the entered username
-  $checkTableQuery = "
-        SELECT name FROM sqlite_master
-        WHERE type='table' AND name=:username
-    ";
-
-  $stmt = $file_db->prepare($checkTableQuery);
+  // Check if the user exists in the 'users' table
+  $checkUserQuery = "SELECT * FROM users WHERE username=:username";
+  $stmt = $file_db->prepare($checkUserQuery);
   $stmt->bindParam(':username', $enteredUsername, PDO::PARAM_STR);
   $stmt->execute();
 
   if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    // Table exists, now check the hashed password
-    $query = "
-            SELECT * FROM $enteredUsername
-            WHERE username=:username
-        ";
-
-    $stmt = $file_db->prepare($query);
-    $stmt->bindParam(':username', $enteredUsername, PDO::PARAM_STR);
-    $stmt->execute();
-
-    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-      // Compare hashed password
-      if (password_verify($enteredPassword, $row['password'])) {
-        // Match found, start session
-        $_SESSION['username'] = $enteredUsername;
-        $_SESSION['table'] = $enteredUsername;
-        ob_start();
-        echo "Login successful!";
-        header('Location: dashboard.php'); // Redirect to dashboard or any other page
-        ob_end_flush();
-        exit();
-      }
+    // User exists, now check the hashed password
+    if (password_verify($enteredPassword, $row['password'])) {
+      // Match found, start session
+      $_SESSION['username'] = $enteredUsername;
+      $_SESSION['table'] = $enteredUsername;
+      ob_start();
+      echo "Login successful!";
+      header('Location: dashboard.php'); // Redirect to dashboard or any other page
+      ob_end_flush();
+      exit();
     }
   }
 

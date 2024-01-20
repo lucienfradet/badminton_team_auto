@@ -14,7 +14,7 @@ $teamArray = [];
 
 // Store the team information in the database
 $updateTeamQuery = "
-  UPDATE  " . $tablename . " 
+  UPDATE users 
   SET team_array = :teamArray
   WHERE username = :username
 ";

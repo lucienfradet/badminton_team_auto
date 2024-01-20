@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // fetch previous teams
     $queryFetchTeamArray = "
       SELECT team_array
-      FROM " . $tablename . "
+      FROM users
       WHERE username = :username
     ";
 
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Store the team information in the database
     $updateTeamQuery = "
-      UPDATE  " . $tablename . " 
+      UPDATE users 
       SET team_array = :teamArray
       WHERE username = :username
     ";

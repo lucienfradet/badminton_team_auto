@@ -42,7 +42,24 @@ $(document).ready(function() {
     // Update button text based on the visibility state
     let buttonText = $('#players-container').is(':visible') ? 'Hide Player List' : 'Show Player List';
     $(this).text(buttonText);
+
+    if ($('#players-container').is(':visible')) {
+      $('#teams-container').hide();
+      $('#toggle-teams-button').text('Show Teams');
+    }
   })
+
+  //toggle visibility of teams
+  $('#toggle-teams-button').on('click', function() {
+    $('#teams-container').toggle(); 
+    let buttonText = $('#teams-container').is(':visible') ? 'Hide Teams' : 'Show Teams';
+    $(this).text(buttonText);
+    //hide players
+    if ($('#teams-container').is(':visible')) {
+      $('#players-container').hide();
+      $('#togglePlayerList').text('Show Player List');
+    }
+  });
 
   //hide by default
   $('#players-container').hide();
@@ -59,13 +76,13 @@ $(document).ready(function() {
           // Iterate through the players and append div for each player
           $.each(players, function(index, player) {
             let playerDiv = '<div class="player-container">';
-            playerDiv += '<p>' + player.name + '</p>';
+            playerDiv += '<p><strong>' + player.name + '</strong></p>';
             playerDiv += '<p>Level: ' + player.level + '</p>';
             let checked = ""
             player.active ? checked = "checked" : checked = "";
             playerDiv += '<input type="checkbox" class="inactive-checkbox" data-player-id="' + player.id + '" ' + checked + '> Active';
-            playerDiv += '<button class="delete-player" data-player-id="' + player.id + '">Delete</button>';
             playerDiv += '<button class="modify-player" data-player-id="' + player.id + '">Modify</button>';            
+            playerDiv += '<button class="delete-player" data-player-id="' + player.id + '">Delete</button>';
             playerDiv += '</div>';
 
             // Append the player div to the container
@@ -140,8 +157,8 @@ $(document).ready(function() {
           //replace by form with same values
           let playerForm = `
           <form class="modify-player-form" action="" method="post">
-              <input type="text" id="playerName" name="playerName" value=${playerName} required>
-              <input type="number" id="playerLevel" name="playerLevel" value=${playerLevel} required>
+              <input type="text" id="playerName" class="modify-player-input" name="playerName" value=${playerName} required>
+              <input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" value=${playerLevel} required>
 
               <button class="applyModifyPlayer" name="modifyPlayer" data-player-id=${playerId}>Modify</button>
               <button type="submit" name="returnModifyPlayer">Abord</button>
@@ -190,6 +207,15 @@ $(document).ready(function() {
   $("#generateTeamsButton").click(function () {
     // Serialize the form data
     let formData = $("#generateTeamsForm").serialize();
+    //hide players
+    if ($('#players-container').is(':visible')) {
+      $('#players-container').hide();
+      $('#togglePlayerList').text('Show Players');
+    }
+
+    //show teams
+    $('#teams-container').show();
+    $('#toggle-teams-button').text('Hide Teams');
 
     // Send an AJAX request
     $.ajax({
@@ -199,6 +225,7 @@ $(document).ready(function() {
       success: function (response) {
         // Display the response in the teams-container div
         $("#session-active-flag").text("YES!"); 
+        $('#session-active-flag').css('color', 'green');
         console.log(response);
 
         // Clear the existing content in teams-container
@@ -270,6 +297,7 @@ $(document).ready(function() {
       url: "resetTeamSession.php",
       success: function (response) {
         $("#session-active-flag").text("None"); 
+        $('#session-active-flag').css('color', 'red');
       },
       error: function (error) {
         console.log("Error:", error);
@@ -302,6 +330,7 @@ $(document).ready(function() {
       // Update button text based on the visibility state
       let flagText = response['isEmpty'] ? 'None' : 'YES';
       $('#session-active-flag').text(flagText);
+      flagText === 'None' ? $('#session-active-flag').css('color', 'red') : $('#session-active-flag').css('color', 'green');
     },
     error: function (error) {
       console.log("Error:", error);

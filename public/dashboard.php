@@ -81,15 +81,15 @@ $file_db = null; // Close database connection
     <?php include 'style_css.php'; ?>
 </head>
 <body>
-
+  <div id="dashboard-container">
     <h2>Logged in as, <?php echo $_SESSION['username']; ?>!</h2>
 
     <!-- Display already added players -->
-    <div id="players-container"></div> 
+    <div id="players-container" class="inner-container"></div> 
 
     <button id="togglePlayerList" class="toggle-buttons">Show Player List</button>
 
-    <div id="addPlayer-container">
+    <div id="addPlayer-container" class="inner-container">
       <!-- Button to toggle the form -->
       <button id="toggleAddPlayerForm" class="toggle-buttons">Add New Player</button>
 
@@ -101,30 +101,48 @@ $file_db = null; // Close database connection
           <label for="playerLevel">Player Level:</label>
           <input type="number" id="playerLevel" name="playerLevel" min="1" max="10" value="1" required>
 
-          <button type="submit" name="addPlayer">Add Player</button>
+          <button id="add-player-btn" type="submit" name="addPlayer">Add Player</button>
       </form>
     </div>
 
-    <div id="generate-teams-container">
+    <div id="generate-teams-container" class="inner-container">
       <h2>Generate Teams</h2>
       <form id="generateTeamsForm" action="generate_teams.php" method="post">
-        <label for="numCourts">Number of Courts:</label>
-        <input type="number" name="numCourts" id="numCourts" min="1" value="1" required>
+        <div class="generateTeamsForm-inner-container">
+          <label for="numCourts">Number of Courts:</label>
+          <input type="number" name="numCourts" id="numCourts" min="1" value="1" required>
+        </div>
 
-        <label>Algorithm Selection:</label>
-        <input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Random
-        <input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Match Level
+        <div class="generateTeamsForm-inner-container">
+          <label>Algorithm Selection:</label>
+          <input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Random
+          <input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Match Level
+        </div>
 
-        <button id="generateTeamsButton" type="button">Generate Team</button>
-        <button id="sessionDeleteButton" type="button">Delete Active Session</button>
+        <div class="generateTeamsForm-inner-container">
+          <button id="generateTeamsButton" type="button">Generate Team</button>
+          <button id="sessionDeleteButton" type="button">Delete Active Session</button>
+        </div>
         <p>Session in progress? 
         <span id="session-active-flag">None</span>
         </p>
+        
+        <div class="generateTeamsForm-inner-container">
+          <button id="toggle-teams-button" type="button">Hide Teams</button>
+        </div>
       </form>
-      <div id="teams-container">
+      <div id="teams-container" class="inner-container">
         
       </div>
     </div>
+
+    <!-- Logout button container -->
+    <div id="logout-container">
+      <form action="logout.php" method="post">
+        <button id="logout-btn" type="submit">Logout</button>
+      </form>
+    </div>
+  </div>
 </body>
 
   <!-- My script(s) -->
