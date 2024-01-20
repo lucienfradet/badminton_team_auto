@@ -129,6 +129,6 @@ $file_db = null; // Close database connection
 
   <!-- My script(s) -->
   <!-- <script src="js/script.js"></script> -->
-  <?php include 'script.js.php'; ?>
+  <?php include 'script_js.php'; ?>
 
 </html>

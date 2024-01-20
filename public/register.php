@@ -1,7 +1,7 @@
 <?php
 // Disable registration by redirecting users away
-// header('Location: index.php');
-// exit();
+header('Location: index.php');
+exit();
 ?>
 
 <!DOCTYPE html>

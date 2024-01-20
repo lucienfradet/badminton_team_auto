@@ -33,14 +33,14 @@
 
     </main>
     <!-- Button to navigate to the registration page -->
-    <a href="register.php"><button>Register</button></a>
+    <!-- <a href="register.php"><button>Register</button></a> -->
 
     <!-- disabled version of the button -->
-    <!-- <a href="register.php"><button disabled>Register</button></a> -->
+    <a href="register.php"><button disabled>Register</button></a>
 </body>
 
   <!-- My script(s) -->
   <!-- <script src="js/script.js"></script> -->
-  <?php include 'script.js.php'; ?>
+  <?php include 'script_js.php'; ?>
 
 </html>

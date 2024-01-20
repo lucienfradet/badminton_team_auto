@@ -1,6 +1,22 @@
 <script>
 /**
  * TODO:
+ *
+ * !! REWRITE ALL DB so that users are in "users" table to prevent sql injection
+ * follow this format:
+
+    *CREATE TABLE users (
+      username TEXT PRIMARY KEY,
+      password TEXT,
+      timestamp TEXT,
+      team_array TEXT,
+      algorithm_selection TEXT
+    );
+
+    Insertion example:
+    INSERT INTO users (username, password, timestamp, team_array, algorithm_selection)
+    VALUES ('john_doe', '$2y$10$RiDJkFdm4WJUbxB7tKX1xOBz7UdE1TAKVYKFvBejTV8wGJ.gjGJ4e', '2022-01-19 12:34:56', '[team1, team2]', 'algorithm1');
+ *
  *  OK make it so changing algorithm resets the session
  *  - Make the login page safe and make sure all the pages are secure and can't be accesed without using ajax
  *  - Deploy using ngnix and docker
