@@ -150,13 +150,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           }
         }
         
-        foreach ($existingTeams as $existingTeam) {
-          if (
-          $team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === null && $existingTeam['player2'] === null
+        if (is_array($existingTeams) && !is_null($existingTeams) && count($existingTeams) > 0) {
+          foreach ($existingTeams as $existingTeam) {
+            if (
+            $team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === null && $existingTeam['player2'] === null
           ) {
-            $score += 8;
+              $score += 8;
+            }
           }
-        }
+        } 
       }
 
       return $score;

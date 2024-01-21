@@ -144,7 +144,6 @@ $file_db = null; // Close database connection
     </div>
   </div>
 </body>
-
   <!-- My script(s) -->
   <!-- <script src="js/script.js"></script> -->
   <?php include 'script_js.php'; ?>
