@@ -168,7 +168,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $teams = [];
 
       foreach ($teamsRaw as $teamRaw) {
-        $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
+        if ($teamRaw['player2'] === null) {
+          $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']];
+        }
+        else {
+          $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
+        }
         $teams[] = $team;
       }
 
