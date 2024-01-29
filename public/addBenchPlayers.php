@@ -61,9 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       WHERE username = :username
     ";
 
+    $combinedTeamsEncoded = json_encode($combinedTeams);
+
     $stmt = $file_db->prepare($updateTeamQuery);
     $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':teamArray', json_encode($combinedTeams));
+    $stmt->bindParam(':teamArray', $combinedTeamsEncoded);
     $stmt->execute();
 
     // Send JSON response
