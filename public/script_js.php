@@ -259,6 +259,29 @@ $(document).ready(function() {
           }
         }
 
+        // Check if the last court div has only one team child
+        let lastCourt = $("#teams-container .court:last-child");
+
+        if (lastCourt.children(".team").length > 1 && lastCourt.children(".team").eq(1).html() === "") {
+          // There is only one team in the last court, make an additional AJAX request
+          let team = lastCourt.find(".team").eq(0);
+
+          $.ajax({
+            type: "POST",
+            url: "addBenchPlayers.php",
+            data: {
+              player1: team.find("p:eq(0)").text(),
+              player2: team.find("p:eq(1)").text()
+            },
+            success: function (result) {
+              console.log("Data added to team_array successfully:", result);
+            },
+            error: function (error) {
+              console.log("Error adding data to team_array:", error);
+              }
+          });
+        }
+
         if (counter < response.teams.length) {
           let benchDiv = $("<div>").addClass("bench").appendTo("#teams-container");
           for (let i = counter; i < response.teams.length; i++) {
