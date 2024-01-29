@@ -239,7 +239,7 @@ $(document).ready(function() {
           // Create divs for each team in the court
           for (let j = 1; j <= 2; j++) {
             let teamDiv = $("<div>").addClass("team").appendTo(courtDiv);
-            
+
             let team = undefined;
             if (counter < response.teams.length) {
               team = response.teams[counter];
@@ -251,35 +251,36 @@ $(document).ready(function() {
             else {
               break;
             }
-              
+
             // Append player1 and player2 to the team div
             $("<p>").text(team['player1']).appendTo(teamDiv);
             $("<p>").text(team['player2']).appendTo(teamDiv);
             counter++;
           }
-        }
 
-        // Check if the last court div has only one team child
-        let lastCourt = $("#teams-container .court:last-child");
+          // Check if the second team in the current court has empty content
+          let teamsInCurrentCourt = courtDiv.children(".team");
+          if (teamsInCurrentCourt.length === 2) {
+            if (teamsInCurrentCourt.eq(1).html() === "") {
+              // There is only one team in the last court, make an additional AJAX request
+              let team = courtDiv.find(".team").eq(0);
 
-        if (lastCourt.children(".team").length > 1 && lastCourt.children(".team").eq(1).html() === "") {
-          // There is only one team in the last court, make an additional AJAX request
-          let team = lastCourt.find(".team").eq(0);
-
-          $.ajax({
-            type: "POST",
-            url: "addBenchPlayers.php",
-            data: {
-              player1: team.find("p:eq(0)").text(),
-              player2: team.find("p:eq(1)").text()
-            },
-            success: function (result) {
-              console.log("Data added to team_array successfully:", result);
-            },
-            error: function (error) {
-              console.log("Error adding data to team_array:", error);
-              }
-          });
+              $.ajax({
+                type: "POST",
+                url: "addBenchPlayers.php",
+                data: {
+                  player1: team.find("p:eq(0)").text(),
+                  player2: team.find("p:eq(1)").text()
+                },
+                success: function (result) {
+                  console.log("Data added to team_array successfully:", result);
+                },
+                error: function (error) {
+                  console.log("Error adding data to team_array:", error);
+                }
+              });
+            }
+          }
         }
 
         if (counter < response.teams.length) {
