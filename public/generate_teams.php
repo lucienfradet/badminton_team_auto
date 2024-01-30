@@ -89,8 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       return $score;
     }
     
-    $debugData = [];
-
     if ($algorithm === "random") {
       $numIterations = 2000;
       $bestScore = PHP_INT_MAX;
@@ -109,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $score = calculateScoreRandom($teams, $existingTeams);
-        $debugData[] = $score;
 
         if ($score < $bestScore) {
           $bestScore = $score;
@@ -301,8 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode([
       'teams' => $teams,
       'courtNumber' => $numCourts,
-      'algorithm' => $algorithm,
-      'debugData' => $debugData
+      'algorithm' => $algorithm
     ]);
 
   } catch (PDOException $e) {
