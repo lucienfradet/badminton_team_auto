@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
             $team['player1']['name'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
           ) {
-              $score += 8;
+              $score += 30;
             }
           }
         } 
@@ -180,6 +180,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       return $teams;
     }
 
+    function compareByLevel($player1, $player2) {
+      return $player1['level'] - $player2['level'];
+    }
+
+    function distributeTeams($teamsRaw) {
+      // redistribute every pair of teams to average the player level on each court ($courtNumber)
+      $teamsDistributed = [];
+
+      for ($i = 0; $i < count($teamsRaw); $i += 2) {
+        // check if there is a second team
+        if ($i + 1 < count($teamsRaw) && $teamsRaw[$i + 1]['player2'] != null) {
+          $courtPlayers = [$teamsRaw[$i]['player1'], $teamsRaw[$i]['player2'], $teamsRaw[$i + 1]['player1'], $teamsRaw[$i + 1]['player2']];
+          // sort by level
+          usort($courtPlayers, 'compareByLevel');
+
+          // redestribute players
+          $teamsDistributed[] = ['player1' => $courtPlayers[0], 'player2' => $courtPlayers[2]];
+          $teamsDistributed[] = ['player1' => $courtPlayers[1], 'player2' => $courtPlayers[3]];
+        }
+        else if (count($teamsRaw) % 2 == 0) {
+          $teamsDistributed[] = $teamsRaw[$i];
+          $teamsDistributed[] = $teamsRaw[$i + 1];
+        }
+      }
+
+      // add any teams that are alone in the court if odd number of teams
+      if (count($teamsRaw) % 2 != 0) {
+        $teamsDistributed[] = $teamsRaw[count($teamsRaw) - 1];
+      }
+
+      return $teamsDistributed;
+    }
+
     if ($algorithm === "matchLevel") {
       $numIterations = 3000;
       $selectedTeams = [];
@@ -198,8 +231,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       $teamsRaw = $teamsArray[$selectedIndex];
 
+      // Distribut level in the pairs of team on every court
+      $teamsDistributed = distributeTeams($teamsRaw);
+
       // Convert teams to only player names
-      $teams = convertTeams($teamsRaw);
+      $teams = convertTeams($teamsDistributed);
     }
 
     // add team into team_array of db

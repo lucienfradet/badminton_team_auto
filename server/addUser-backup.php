@@ -17,7 +17,8 @@ try {
         timeStamp TEXT,
         password TEXT NOT NULL,
         team_array TEXT,
-        algorithm TEXT
+        algorithm TEXT,
+        numCourts TEXT DEFAULT '1'
       )
     ";
   $file_db->exec($queryCreateTableDebut);

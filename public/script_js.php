@@ -2,7 +2,7 @@
 /**
  * TODO:
  *
- * !! REWRITE ALL DB so that users are in "users" table to prevent sql injection
+ * OK REWRITE ALL DB so that users are in "users" table to prevent sql injection
  * follow this format:
 
     *CREATE TABLE users (
@@ -18,12 +18,14 @@
     VALUES ('john_doe', '$2y$10$RiDJkFdm4WJUbxB7tKX1xOBz7UdE1TAKVYKFvBejTV8wGJ.gjGJ4e', '2022-01-19 12:34:56', '[team1, team2]', 'algorithm1');
  *
  *  OK make it so changing algorithm resets the session
- *  - Make the login page safe and make sure all the pages are secure and can't be accesed without using ajax
- *  - Deploy using ngnix and docker
+ *  OK Make the login page safe and make sure all the pages are secure and can't be accesed without using ajax
+ *  OK Deploy using ngnix and docker
  *
- *  - Restarting the db and creating users for the different groups with passwords
- *  - beautifying the page
- *
+ *  OK Restarting the db and creating users for the different groups with passwords
+ *  OK beautifying the page
+ *  
+ *  - add cloudflare CAPTCHA
+ *  - add a system to limit the number of login attempts
  */
 
 let playerData = [];
@@ -88,7 +90,7 @@ $(document).ready(function() {
             // Append the player div to the container
             $('#players-container').append(playerDiv);
           });
-          
+
           // Bind checkBox inactive
         $('.inactive-checkbox').on('change', function() {
           let playerId = $(this).data('player-id');
@@ -114,7 +116,7 @@ $(document).ready(function() {
         // Bind click event to dynamically created delete buttons
         $('.delete-player').on('click', function() {
           let playerIdToDelete = $(this).data('player-id');
-          
+
           // Store a reference to 'this'
           let clickedButton = $(this);
 
@@ -156,14 +158,14 @@ $(document).ready(function() {
 
           //replace by form with same values
           let playerForm = `
-          <form class="modify-player-form" action="" method="post">
-              <input type="text" id="playerName" class="modify-player-input" name="playerName" value=${playerName} required>
-              <input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" value=${playerLevel} required>
+<form class="modify-player-form" action="" method="post">
+<input type="text" id="playerName" class="modify-player-input" name="playerName" value=${playerName} required>
+<input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" value=${playerLevel} required>
 
-              <button class="applyModifyPlayer" name="modifyPlayer" data-player-id=${playerId}>Modify</button>
-              <button type="submit" name="returnModifyPlayer">Abord</button>
-          </form>
-          `;
+<button class="applyModifyPlayer" name="modifyPlayer" data-player-id=${playerId}>Modify</button>
+<button type="submit" name="returnModifyPlayer">Abord</button>
+</form>
+`;
           playerDiv.append(playerForm);
 
           //add button events
@@ -308,6 +310,51 @@ $(document).ready(function() {
           }
         } 
 
+        // // balance courts if matchLevelAlgorithm
+        // let algorithmSelected = $("input[name='algorithm']:checked").val();
+        // if (algorithmSelected === "matchLevel") {
+        //   console.log("matchLevel adaptation: ");
+        //   // Iterate through all .court divs
+        //   $(".court").each(function () {
+        //     if ($(this).children(".team").length === 2 && $(this).children(".team").eq(1).html() !== "") {
+        //       console.log("there is two team in the court");
+        //       // Get the player names from the current .court div
+        //       let player1 = $(this).find(".team:eq(0) p:eq(0)").text();
+        //       let player2 = $(this).find(".team:eq(0) p:eq(1)").text();
+        //       let player3 = $(this).find(".team:eq(1) p:eq(0)").text();
+        //       let player4 = $(this).find(".team:eq(1) p:eq(1)").text();
+        //
+        //       let teamArray = [];
+        //
+        //       // Add players to the array with level undefined
+        //       if (player1 !== "") {
+        //         teamArray.push({ name: player1, level: undefined });
+        //       }
+        //       if (player2 !== "") {
+        //         teamArray.push({ name: player2, level: undefined });
+        //       }
+        //       if (player3 !== "") {
+        //         teamArray.push({ name: player3, level: undefined });
+        //       }
+        //       if (player4 !== "") {
+        //         teamArray.push({ name: player4, level: undefined });
+        //       }
+        //
+        //       // Iterate through #players-container to update player levels
+        //       $("#players-container .player-container").each(function () {
+        //         let playerName = $(this).find("p:eq(0)").text();
+        //         let playerLevel = $(this).find("p:eq(1)").text();
+        //
+        //         for (let team of teamArray) {
+        //           if (playerName === team.name) {
+        //             team.level = playerLevel.slice(-1);
+        //           }
+        //         }
+        //       });
+        //     }
+        //   });        
+        // }
+
       },
       error: function (error) {
         console.log("Error:", error);
@@ -363,7 +410,7 @@ $(document).ready(function() {
 
   // Update the algorithm selection when the user changes the radio button
   $('input[name="algorithm"]').on('change', function () {
-    var newAlgorithm = $('input[name="algorithm"]:checked').val();
+    let newAlgorithm = $('input[name="algorithm"]:checked').val();
 
     // Update the algorithm selection in the database
     $.ajax({
@@ -378,7 +425,25 @@ $(document).ready(function() {
       }
     });
   });
-  
+
+  // update the numCourts in the db when changed
+  $('#numCourts').on('change', function() {
+    let newNumCourts = $(this).val();
+
+    // update the numCourts in db
+    $.ajax({
+      type: 'POST',
+      url: 'update_numCourts.php',
+      data: { numCourts: newNumCourts },
+      success: function (response) {
+        console.log('numCourts selection updated successfully');
+      },
+      error: function (error) {
+        console.log('Error updating numCourts selection:', error);
+      }
+    });
+  });
+
   // Fetch current algorithm selection on page load
   $.ajax({
     type: 'GET',
@@ -393,6 +458,19 @@ $(document).ready(function() {
     },
     error: function (error) {
       console.log('Error fetching algorithm selection:', error);
+    }
+  });
+  
+  // Fetch current numCourts selection on page load
+  $.ajax({
+    type: 'GET',
+    url: 'get_numCourts.php',
+    success: function (response) {
+      // update the numCourts
+      $('#numCourts').val(response.numCourts);
+    },
+    error: function (error) {
+      console.log('Error fetching numCourts selection:', error);
     }
   });
 
