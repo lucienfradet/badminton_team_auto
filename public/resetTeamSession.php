@@ -19,9 +19,11 @@ $updateTeamQuery = "
   WHERE username = :username
 ";
 
+$teamArrayEncoded = json_encode($teamArray);
+
 $stmt = $file_db->prepare($updateTeamQuery);
 $stmt->bindParam(':username', $username);
-$stmt->bindParam(':teamArray', json_encode($teamArray));
+$stmt->bindParam(':teamArray', $teamArrayEncoded);
 $stmt->execute();
 
 ?>

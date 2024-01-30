@@ -50,30 +50,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // !!!!!!!!!! RANDOM AGLO !!!!!!!!!!!!!!!
     function calculateScoreRandom($newTeams, $existingTeams) {
-        $score = 0;
+      $score = 0;
+      $scoreIncrementBench = 10;
 
-        foreach ($newTeams as $team) {
-            foreach ($existingTeams as $existingTeam) {
-                if (
-                    ($team['player1'] === $existingTeam['player1'] && $team['player2'] === $existingTeam['player2']) ||
-                    ($team['player1'] === $existingTeam['player2'] && $team['player2'] === $existingTeam['player1'])
-                ) {
-                    $score++;
-                }
+      $index = 0;
+      foreach ($newTeams as $team) {
+        foreach ($existingTeams as $existingTeam) {
+          if (
+          ($team['player1'] === $existingTeam['player1'] && $team['player2'] === $existingTeam['player2']) ||
+            ($team['player1'] === $existingTeam['player2'] && $team['player2'] === $existingTeam['player1'])
+        ) {
+            $score++;
+          }
 
-                if (
-                    $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
-                ) {
-                    $score += 5;
-                }
+          if (
+          $team['player1'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
+        ) {
+            $score += $scoreIncrementBench;
+          }
+
+          // check the case where there is a team alone but without null
+          if (count($newTeams) % 2 !== 0 && $index === count($newTeams) - 1
+            // OR the case where there is there is even number but there is a player on bench and a team alone on a court 
+            || $index === count($newTeams) - 2 && $newTeams[count($newTeams) - 1]['player2'] === null 
+        ) {
+            if (
+            $team['player1'] === $existingTeam['player1'] && $existingTeam['player2'] === null
+              || $team['player2'] === $existingTeam['player1'] && $existingTeam['player2'] === null
+          ) {
+              $score += $scoreIncrementBench;
             }
+          }
         }
 
-        return $score;
+        $index++;
+      }
+
+      return $score;
     }
     
+    $debugData = [];
+
     if ($algorithm === "random") {
-      $numIterations = 1000;
+      $numIterations = 2000;
       $bestScore = PHP_INT_MAX;
       $bestTeams = [];
 
@@ -90,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $score = calculateScoreRandom($teams, $existingTeams);
+        $debugData[] = $score;
 
         if ($score < $bestScore) {
           $bestScore = $score;
@@ -142,7 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     function calculateScoreMatchLevel($teams, $existingTeams) {
       $score = 0;
+      $scoreIncrementBench = 30;
 
+      $index = 0;
       foreach ($teams as $team) {
         if ($team['player2'] !== null && $team['player1'] !== null) {
           if ($team['player1']['level'] !== null && $team['player2']['level'] !== null) {
@@ -155,9 +177,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (
             $team['player1']['name'] === $existingTeam['player1'] && $team['player2'] === null && $existingTeam['player2'] === null
           ) {
-              $score += 30;
+              $score += $scoreIncrementBench;
+            }
+
+            // check the case where there is a team alone but without null
+            if (count($teams) % 2 !== 0 && $index === count($teams) - 1 && $team['player2'] !== null
+                // OR the case where there is there is even number but there is a player on bench and a team alone on a court 
+                || $index === count($teams) - 2 && $teams[count($teams) - 1]['player2'] === null 
+          ) {
+              if (
+              $team['player1']['name'] === $existingTeam['player1'] && $existingTeam['player2'] === null
+                || $team['player2']['name'] === $existingTeam['player1'] && $existingTeam['player2'] === null
+            ) {
+                $score += $scoreIncrementBench;
+              }
             }
           }
+          $index++;
         } 
       }
 
@@ -265,7 +301,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode([
       'teams' => $teams,
       'courtNumber' => $numCourts,
-      'algorithm' => $algorithm
+      'algorithm' => $algorithm,
+      'debugData' => $debugData
     ]);
 
   } catch (PDOException $e) {

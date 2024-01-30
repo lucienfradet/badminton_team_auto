@@ -310,51 +310,6 @@ $(document).ready(function() {
           }
         } 
 
-        // // balance courts if matchLevelAlgorithm
-        // let algorithmSelected = $("input[name='algorithm']:checked").val();
-        // if (algorithmSelected === "matchLevel") {
-        //   console.log("matchLevel adaptation: ");
-        //   // Iterate through all .court divs
-        //   $(".court").each(function () {
-        //     if ($(this).children(".team").length === 2 && $(this).children(".team").eq(1).html() !== "") {
-        //       console.log("there is two team in the court");
-        //       // Get the player names from the current .court div
-        //       let player1 = $(this).find(".team:eq(0) p:eq(0)").text();
-        //       let player2 = $(this).find(".team:eq(0) p:eq(1)").text();
-        //       let player3 = $(this).find(".team:eq(1) p:eq(0)").text();
-        //       let player4 = $(this).find(".team:eq(1) p:eq(1)").text();
-        //
-        //       let teamArray = [];
-        //
-        //       // Add players to the array with level undefined
-        //       if (player1 !== "") {
-        //         teamArray.push({ name: player1, level: undefined });
-        //       }
-        //       if (player2 !== "") {
-        //         teamArray.push({ name: player2, level: undefined });
-        //       }
-        //       if (player3 !== "") {
-        //         teamArray.push({ name: player3, level: undefined });
-        //       }
-        //       if (player4 !== "") {
-        //         teamArray.push({ name: player4, level: undefined });
-        //       }
-        //
-        //       // Iterate through #players-container to update player levels
-        //       $("#players-container .player-container").each(function () {
-        //         let playerName = $(this).find("p:eq(0)").text();
-        //         let playerLevel = $(this).find("p:eq(1)").text();
-        //
-        //         for (let team of teamArray) {
-        //           if (playerName === team.name) {
-        //             team.level = playerLevel.slice(-1);
-        //           }
-        //         }
-        //       });
-        //     }
-        //   });        
-        // }
-
       },
       error: function (error) {
         console.log("Error:", error);
