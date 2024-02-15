@@ -78,8 +78,8 @@ $(document).ready(function() {
           // Iterate through the players and append div for each player
           $.each(players, function(index, player) {
             let playerDiv = '<div class="player-container">';
-            playerDiv += '<p><strong>' + player.name + '</strong></p>';
-            playerDiv += '<p>Nv: ' + player.level + '</p>';
+            playerDiv += '<p class="player-container-p"><strong>' + player.name + '</strong></p>';
+            playerDiv += '<p class="player-container-p">Nv: ' + player.level + '</p>';
             let checked = ""
             player.active ? checked = "checked" : checked = "";
             playerDiv += '<input type="checkbox" class="inactive-checkbox" data-player-id="' + player.id + '" ' + checked + '> Présent';

@@ -97,6 +97,7 @@ h2, p {
 .delete-player {
   background-color: DarkRed;
   color: white;
+  padding: 5px;
 }
 
 #addPlayerForm {
@@ -172,10 +173,14 @@ h2, p {
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
   width: 25%; /* Adjust the width for two columns with some spacing */
-  margin-bottom: 5px; /* Add margin between player-containers */
+  margin-bottom: 3px; /* Add margin between player-containers */
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.player-container-p {
+  margin: 3px 3px
 }
 
 #generateTeamsForm {
