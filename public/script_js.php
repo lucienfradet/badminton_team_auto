@@ -35,26 +35,26 @@ $(document).ready(function() {
   $('#toggleAddPlayerForm').on('click', function() {
     $('#addPlayerForm').toggle();
     // Update button text based on the visibility state
-    let buttonText = $('#addPlayerForm').is(':visible') ? 'Hide new player form' : 'Add New Player';
+    let buttonText = $('#addPlayerForm').is(':visible') ? "Cacher l'ajout d'un joueur" : 'Ajouter un joueur';
     $(this).text(buttonText);
   });
 
   $('#togglePlayerList').on('click', function () {
     $('#players-container').toggle(); 
     // Update button text based on the visibility state
-    let buttonText = $('#players-container').is(':visible') ? 'Hide Player List' : 'Show Player List';
+    let buttonText = $('#players-container').is(':visible') ? 'Cacher les joueurs' : 'Afficher les joueurs';
     $(this).text(buttonText);
 
     if ($('#players-container').is(':visible')) {
       $('#teams-container').hide();
-      $('#toggle-teams-button').text('Show Teams');
+      $('#toggle-teams-button').text('Afficher les équipes');
     }
   })
 
   //toggle visibility of teams
   $('#toggle-teams-button').on('click', function() {
     $('#teams-container').toggle(); 
-    let buttonText = $('#teams-container').is(':visible') ? 'Hide Teams' : 'Show Teams';
+    let buttonText = $('#teams-container').is(':visible') ? 'Cacher les équipes' : 'Afficher les équipes';
     $(this).text(buttonText);
     //hide players
     if ($('#teams-container').is(':visible')) {
@@ -79,12 +79,12 @@ $(document).ready(function() {
           $.each(players, function(index, player) {
             let playerDiv = '<div class="player-container">';
             playerDiv += '<p><strong>' + player.name + '</strong></p>';
-            playerDiv += '<p>Level: ' + player.level + '</p>';
+            playerDiv += '<p>Nv: ' + player.level + '</p>';
             let checked = ""
             player.active ? checked = "checked" : checked = "";
-            playerDiv += '<input type="checkbox" class="inactive-checkbox" data-player-id="' + player.id + '" ' + checked + '> Active';
-            playerDiv += '<button class="modify-player" data-player-id="' + player.id + '">Modify</button>';            
-            playerDiv += '<button class="delete-player" data-player-id="' + player.id + '">Delete</button>';
+            playerDiv += '<input type="checkbox" class="inactive-checkbox" data-player-id="' + player.id + '" ' + checked + '> Présent';
+            playerDiv += '<button class="modify-player" data-player-id="' + player.id + '">Modifier</button>';            
+            playerDiv += '<button class="delete-player" data-player-id="' + player.id + '">Supprimer</button>';
             playerDiv += '</div>';
 
             // Append the player div to the container
@@ -162,8 +162,8 @@ $(document).ready(function() {
 <input type="text" id="playerName" class="modify-player-input" name="playerName" value=${playerName} required>
 <input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" value=${playerLevel} required>
 
-<button class="applyModifyPlayer" name="modifyPlayer" data-player-id=${playerId}>Modify</button>
-<button type="submit" name="returnModifyPlayer">Abord</button>
+<button class="applyModifyPlayer" name="modifyPlayer" data-player-id=${playerId}>Modifier</button>
+<button type="submit" name="returnModifyPlayer">Annuler</button>
 </form>
 `;
           playerDiv.append(playerForm);
@@ -212,12 +212,12 @@ $(document).ready(function() {
     //hide players
     if ($('#players-container').is(':visible')) {
       $('#players-container').hide();
-      $('#togglePlayerList').text('Show Players');
+      $('#togglePlayerList').text('Afficher les joueurs');
     }
 
     //show teams
     $('#teams-container').show();
-    $('#toggle-teams-button').text('Hide Teams');
+    $('#toggle-teams-button').text('Cacher les équipes');
 
     // Send an AJAX request
     $.ajax({
@@ -226,7 +226,7 @@ $(document).ready(function() {
       data: formData,
       success: function (response) {
         // Display the response in the teams-container div
-        $("#session-active-flag").text("YES!"); 
+        $("#session-active-flag").text("OUI!"); 
         $('#session-active-flag').css('color', 'green');
         console.log(response);
 
@@ -322,7 +322,7 @@ $(document).ready(function() {
       type: "POST",
       url: "resetTeamSession.php",
       success: function (response) {
-        $("#session-active-flag").text("None"); 
+        $("#session-active-flag").text("Aucune"); 
         $('#session-active-flag').css('color', 'red');
       },
       error: function (error) {
@@ -339,7 +339,7 @@ $(document).ready(function() {
   //     url: "resetTeamSession.php",
   //     success: function(response) {
   //       console.log(response);
-  //       $('#session-active-flag').text("None");
+  //       $('#session-active-flag').text("Aucune");
   //     },
   //     error: function(error) {
   //       console.log("Error:", error);
@@ -354,9 +354,9 @@ $(document).ready(function() {
     success: function (response) {
       console.log(response);
       // Update button text based on the visibility state
-      let flagText = response['isEmpty'] ? 'None' : 'YES';
+      let flagText = response['isEmpty'] ? 'Aucune' : 'OUI';
       $('#session-active-flag').text(flagText);
-      flagText === 'None' ? $('#session-active-flag').css('color', 'red') : $('#session-active-flag').css('color', 'green');
+      flagText === 'Aucune' ? $('#session-active-flag').css('color', 'red') : $('#session-active-flag').css('color', 'green');
     },
     error: function (error) {
       console.log("Error:", error);

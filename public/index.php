@@ -83,19 +83,19 @@
 <body>
 
     <header>
-        <h1 id="title">Connect to Badminton Team Builder</h1>
+        <h1 id="title">Connexion au générateur d'équipe</h1>
         <!-- Add navigation or other header content here -->
     </header>
 
     <main>
         <form action="login.php" method="post">
-          <label for="username">Username:</label>
+          <label for="username">Nom d'utilisateur:</label>
           <input type="text" id="username" name="username" required>
 
-          <label for="password">Password:</label>
+          <label for="password">Mot de passe:</label>
           <input type="password" id="password" name="password" required>
 
-          <button type="submit">Login</button>
+          <button type="submit">Connexion</button>
         </form>
 
     </main>

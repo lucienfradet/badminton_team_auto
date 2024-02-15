@@ -72,7 +72,7 @@ $file_db = null; // Close database connection
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Tableau de bord</title>
     <!-- Add your styles here if needed -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
@@ -82,53 +82,63 @@ $file_db = null; // Close database connection
 </head>
 <body>
   <div id="dashboard-container">
-    <h2>Logged in as, <?php echo $_SESSION['username']; ?>!</h2>
+    <h2>Connecté en tant que, <?php echo $_SESSION['username']; ?>!</h2>
 
     <!-- Display already added players -->
     <div id="players-container" class="inner-container"></div> 
 
-    <button id="togglePlayerList" class="toggle-buttons">Show Player List</button>
+    <button id="togglePlayerList" class="toggle-buttons">Afficher la liste de joueurs</button>
 
     <div id="addPlayer-container" class="inner-container">
       <!-- Button to toggle the form -->
-      <button id="toggleAddPlayerForm" class="toggle-buttons">Add New Player</button>
+      <button id="toggleAddPlayerForm" class="toggle-buttons">Ajouter un joueur</button>
 
       <!-- Form to add new player -->
       <form id="addPlayerForm" action="" method="post">
-          <label for="playerName">Player Name:</label>
+          <label for="playerName">Nom:</label>
           <input type="text" id="playerName" name="playerName" required>
 
-          <label for="playerLevel">Player Level:</label>
+          <label for="playerLevel">Niveau:</label>
           <input type="number" id="playerLevel" name="playerLevel" min="1" max="10" value="1" required>
 
-          <button id="add-player-btn" type="submit" name="addPlayer">Add Player</button>
+          <button id="add-player-btn" type="submit" name="addPlayer">Ajouter</button>
       </form>
     </div>
 
     <div id="generate-teams-container" class="inner-container">
-      <h2>Generate Teams</h2>
+      <h2>Générer les équipes</h2>
       <form id="generateTeamsForm" action="generate_teams.php" method="post">
         <div class="generateTeamsForm-inner-container">
-          <label for="numCourts">Number of Courts:</label>
+          <label for="numCourts"><strong>Nombre de terrain(s):</strong></label>
           <input type="number" name="numCourts" id="numCourts" min="1" value="1" required>
         </div>
 
         <div class="generateTeamsForm-inner-container">
-          <label>Algorithm Selection:</label>
-          <input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Random
-          <input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Match Level
+
+<table>
+  <tr>
+    <td colspan="2" style="text-align: center;"><label for="randomAlgorithm"><strong>Sélection d'algorithme:</strong></label></td>
+  </tr>
+  <tr>
+    <td style="width: 50%;"><input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Aléatoire</td>
+    <td style="width: 50%;"><input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Balancer avec le niveau des joueurs</td>
+  </tr>
+</table>
+          <!-- <label>Sélection d'algorithme:</label> -->
+          <!-- <input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Aléatoire -->
+          <!-- <input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Balancer le niveau des jouerus -->
         </div>
 
         <div class="generateTeamsForm-inner-container">
-          <button id="generateTeamsButton" type="button">Generate Team</button>
-          <button id="sessionDeleteButton" type="button">Delete Active Session</button>
+          <button id="generateTeamsButton" type="button">Générer les équipes</button>
+          <button id="sessionDeleteButton" type="button">Effacer l'historique des équipes</button>
         </div>
-        <p>Session in progress? 
+        <p><strong>Historique existante?</strong> 
         <span id="session-active-flag">None</span>
         </p>
         
         <div class="generateTeamsForm-inner-container">
-          <button id="toggle-teams-button" type="button">Hide Teams</button>
+          <button id="toggle-teams-button" type="button">Cacher les équipes</button>
         </div>
       </form>
       <div id="teams-container" class="inner-container">
@@ -139,7 +149,7 @@ $file_db = null; // Close database connection
     <!-- Logout button container -->
     <div id="logout-container">
       <form action="logout.php" method="post">
-        <button id="logout-btn" type="submit">Logout</button>
+        <button id="logout-btn" type="submit">Déconnexion</button>
       </form>
     </div>
   </div>
