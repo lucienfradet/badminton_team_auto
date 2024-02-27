@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       ];
       
       for ($i = 0; $i < count($players); $i+=4) { 
-        if ($i + 4 >= count($players) || $numCourts <= 0) {
+        if ($i + 4 > count($players) || $numCourts <= 0) {
           $benchPlayers = array_slice($players, $i, 4);
           foreach ($benchPlayers as $benchPlayer) {
             $courts['bench'][] = $benchPlayer;
