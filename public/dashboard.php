@@ -114,20 +114,18 @@ $file_db = null; // Close database connection
         </div>
 
         <div class="generateTeamsForm-inner-container">
-
-<table>
-  <tr>
-    <td colspan="2" style="text-align: center;"><label for="randomAlgorithm"><strong>Sélection d'algorithme:</strong></label></td>
-  </tr>
-  <tr>
-    <td style="width: 50%;"><input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Aléatoire</td>
-    <td style="width: 50%;"><input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Balancer avec le niveau des joueurs</td>
-  </tr>
-</table>
-          <!-- <label>Sélection d'algorithme:</label> -->
-          <!-- <input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Aléatoire -->
-          <!-- <input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Balancer le niveau des jouerus -->
+            <table>
+              <tr>
+                <td colspan="2" style="text-align: center;"><label for="randomAlgorithm"><strong>Sélection d'algorithme:</strong></label></td>
+              </tr>
+              <tr>
+                <td style="width: 50%;"><input id="randomAlgorithm" type="radio" name="algorithm" value="random"> Aléatoire</td>
+                <td style="width: 50%;"><input id="matchLevelAlgorithm" type="radio" name="algorithm" value="matchLevel"> Balancer avec le niveau des joueurs</td>
+              </tr>
+            </table>
         </div>
+
+        <span style="font-size: 10pt;">Balancer les équipes sur les terrains</span><input type="checkbox" name='balanceCourtsSwitch' id="balance-courts-switch">
 
         <div class="generateTeamsForm-inner-container">
           <button id="generateTeamsButton" type="button">Générer les équipes</button>
@@ -140,6 +138,7 @@ $file_db = null; // Close database connection
         <div class="generateTeamsForm-inner-container">
           <button id="toggle-teams-button" type="button">Cacher les équipes</button>
         </div>
+
       </form>
       <div id="teams-container" class="inner-container">
         
@@ -155,7 +154,7 @@ $file_db = null; // Close database connection
   </div>
 </body>
   <!-- My script(s) -->
-  <!-- <script src="js/script.js"></script> -->
+  <!-- <script src="script.js"></script> -->
   <?php include 'script_js.php'; ?>
 
 </html>

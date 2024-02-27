@@ -13,7 +13,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['table'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $playerId = isset($_POST['playerId']);
+        $playerId = $_POST['playerId'];
         $playerName = $_POST['name'];
         $playerLevel = $_POST['level'];
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response = [
             'success' => true,
             'playerName' => $playerName,
-            'rowCount' => $stmt->rowCount(),
+            'playerLevel' => $playerLevel,
         ];
         echo json_encode($response);
 

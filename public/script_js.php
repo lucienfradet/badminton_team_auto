@@ -1,29 +1,7 @@
 <script>
 /**
  * TODO:
- *
- * OK REWRITE ALL DB so that users are in "users" table to prevent sql injection
- * follow this format:
-
-    *CREATE TABLE users (
-      username TEXT PRIMARY KEY,
-      password TEXT,
-      timestamp TEXT,
-      team_array TEXT,
-      algorithm_selection TEXT
-    );
-
-    Insertion example:
-    INSERT INTO users (username, password, timestamp, team_array, algorithm_selection)
-    VALUES ('john_doe', '$2y$10$RiDJkFdm4WJUbxB7tKX1xOBz7UdE1TAKVYKFvBejTV8wGJ.gjGJ4e', '2022-01-19 12:34:56', '[team1, team2]', 'algorithm1');
- *
- *  OK make it so changing algorithm resets the session
- *  OK Make the login page safe and make sure all the pages are secure and can't be accesed without using ajax
- *  OK Deploy using ngnix and docker
- *
- *  OK Restarting the db and creating users for the different groups with passwords
- *  OK beautifying the page
- *  
+ *  - Fix the random slogrithm team generation to create courts also directly and refactor everything accordingly
  *  - add cloudflare CAPTCHA
  *  - add a system to limit the number of login attempts
  */
@@ -72,7 +50,6 @@ $(document).ready(function() {
       method: 'POST',
       dataType: 'json',
       success: function(players) {
-        console.log(players);
         // Check if the response is an array
         if (Array.isArray(players)) {
           // Iterate through the players and append div for each player
@@ -160,7 +137,7 @@ $(document).ready(function() {
           let playerForm = `
 <form class="modify-player-form" action="" method="post">
 <input type="text" id="playerName" class="modify-player-input" name="playerName" value=${playerName} required>
-<input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" value=${playerLevel} required>
+<input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" min="1" max="10" value=${playerLevel} required>
 
 <button class="applyModifyPlayer" name="modifyPlayer" data-player-id=${playerId}>Modifier</button>
 <button type="submit" name="returnModifyPlayer">Annuler</button>
@@ -206,9 +183,17 @@ $(document).ready(function() {
     }
   });
 
-  $("#generateTeamsButton").click(function () {
+  function generateTeams({ save: saveFlag }) {
     // Serialize the form data
     let formData = $("#generateTeamsForm").serialize();
+    // add saveFlag
+    formData+= `&postSwitch=${saveFlag}`;
+    // add pastData
+    if ($('#teams-container').data("data") !== undefined) {
+      formData+= `&pastData=${JSON.stringify($('#teams-container').data("data"))}`
+    }
+
+
     //hide players
     if ($('#players-container').is(':visible')) {
       $('#players-container').hide();
@@ -232,90 +217,52 @@ $(document).ready(function() {
 
         // Clear the existing content in teams-container
         $("#teams-container").empty();
+        $("#teams-container").data("data", response.courts);
 
         // Create divs for each court and teams
-        let counter = 0;
         for (let i = 1; i <= response['courtNumber']; i++) {
           // Create a div for the court
           let courtDiv = $("<div>").addClass("court").appendTo("#teams-container");
-          // Create divs for each team in the court
-          for (let j = 1; j <= 2; j++) {
-            let teamDiv = $("<div>").addClass("team").appendTo(courtDiv);
 
-            let team = undefined;
-            if (counter < response.teams.length) {
-              team = response.teams[counter];
-              //break out if the last team is not a team
-              if (team['player2'] == null) {
-                break;
-              }
-            } 
-            else {
-              break;
-            }
+          if (i <= response.courts.courts.length) {
+            // Create divs for each team in the court
+            for (let j = 0; j < 2; j++) {
+              let teamDiv = $("<div>").addClass("team").appendTo(courtDiv);
 
-            // Append player1 and player2 to the team div
-            $("<p>").text(team['player1']).appendTo(teamDiv);
-            $("<p>").text(team['player2']).appendTo(teamDiv);
-            counter++;
-          }
+              let team = response.courts.courts[i - 1][j];
 
-          // Check if the second team in the current court has empty content
-          let teamsInCurrentCourt = courtDiv.children(".team");
-          if (teamsInCurrentCourt.length === 2) {
-            if (teamsInCurrentCourt.eq(1).html() === "") {
-              // There is only one team in the last court, make an additional AJAX request
-              let team = courtDiv.find(".team").eq(0);
-
-              $.ajax({
-                type: "POST",
-                url: "addBenchPlayers.php",
-                data: {
-                  player1: team.find("p:eq(0)").text(),
-                  player2: team.find("p:eq(1)").text()
-                },
-                success: function (result) {
-                  console.log("Data added to team_array successfully:", result);
-                },
-                error: function (error) {
-                  console.log("Error adding data to team_array:", error);
-                }
-              });
+              // Append player1 and player2 to the team div
+              $("<p>").text(team.player1.name).appendTo(teamDiv);
+              $("<p>").text(team.player2.name).appendTo(teamDiv);
             }
           }
+
         }
 
-        if (counter < response.teams.length) {
-          let benchDiv = $("<div>").addClass("bench").appendTo("#teams-container");
-          for (let i = counter; i < response.teams.length; i++) {
-            $("<p>").text(response.teams[i]['player1']).appendTo(benchDiv);
-            $("<p>").text(response.teams[i]['player2']).appendTo(benchDiv);
-            //add bench players to db if not already in empty team
-            if (response.teams[i]['player2'] !== null) {
-              $.ajax({
-                type: "POST",
-                url: "addBenchPlayers.php",
-                data: {
-                  player1: response.teams[i]['player1'],
-                  player2: response.teams[i]['player2']
-                },
-                success: function (result) {
-                  console.log("Data added to team_array successfully:", result);
-                },
-                error: function (error) {
-                  console.log("Error adding data to team_array:", error);
-                }
-              });
-            }
-          }
-        } 
+        // Add bench players
+        let benchDiv = $("<div>").addClass("bench").appendTo("#teams-container");
+        for (let i = 0; i < response.courts.bench.length; i++) {
+          $("<p>").text(response.courts.bench[i].player1.name).appendTo(benchDiv);
+        }
+
+        // append the error/redo option
+        let redoTeamsButton = $("<p>(En cas d'erreur, cliquer sur ce texte afin de re-générer les équipes sans ajouter les précédentes à l'historique)</p>").attr("id", "redoTeams").appendTo("#teams-container");
+        $('#redoTeams').click(function() {
+          generateTeams({ save: false });
+          console.log("redoing teams... need to code.");
+        });
 
       },
       error: function (error) {
         console.log("Error:", error);
       }
     });
+  }
+
+  $("#generateTeamsButton").click(function() {
+    generateTeams({ save: true })
   });
+  //
 
   $("#sessionDeleteButton").click(function () {
     $.ajax({
@@ -324,28 +271,13 @@ $(document).ready(function() {
       success: function (response) {
         $("#session-active-flag").text("Aucune"); 
         $('#session-active-flag').css('color', 'red');
+        $("#teams-container").removeData();
       },
       error: function (error) {
         console.log("Error:", error);
       }
     });
   });
-
-  //Reset session if algorithm is changed
-  // $('input[name="algorithm"]').change(function() {
-  //   // Make an AJAX post request
-  //   $.ajax({
-  //     type: 'POST',
-  //     url: "resetTeamSession.php",
-  //     success: function(response) {
-  //       console.log(response);
-  //       $('#session-active-flag').text("Aucune");
-  //     },
-  //     error: function(error) {
-  //       console.log("Error:", error);
-  //     }
-  //   });
-  // });
 
   //check session state on page load
   $.ajax({
@@ -363,9 +295,28 @@ $(document).ready(function() {
     }
   });
 
+  function checkBalanceTeamSwitch() {
+    let algorithm = $('input[name="algorithm"]:checked').val();
+
+    // Check if the radio button is selected
+    if(algorithm === "matchLevel") {
+      // If selected, check the checkbox and disable it
+      $('#balance-courts-switch').prop('checked', true);
+      $('#balance-courts-switch').prop('disabled', true);
+    } else if(algorithm === "random") {
+      // If selected, check the checkbox and disable it
+      $('#balance-courts-switch').prop('checked', false);
+      $('#balance-courts-switch').prop('disabled', false);
+    } 
+  }
+
   // Update the algorithm selection when the user changes the radio button
   $('input[name="algorithm"]').on('change', function () {
     let newAlgorithm = $('input[name="algorithm"]:checked').val();
+
+    checkBalanceTeamSwitch();
+
+    // fetch balance team switch selection HERE
 
     // Update the algorithm selection in the database
     $.ajax({
@@ -410,6 +361,7 @@ $(document).ready(function() {
       } else if (response.algorithmSelection === 'matchLevel') {
         $('#matchLevelAlgorithm').prop('checked', true);
       }
+      checkBalanceTeamSwitch();
     },
     error: function (error) {
       console.log('Error fetching algorithm selection:', error);

@@ -119,6 +119,7 @@ h2, p {
   border: 3px solid DarkSlateGrey;
   margin: 5px; /* Add margin for spacing between courts */
   width: 95%;
+  min-height: 20px;
 }
 
 /* Style for team divs inside the court */
@@ -136,6 +137,7 @@ h2, p {
   border: 3px solid DarkRed;
   margin: 10px; /* Add margin for spacing between bench divs */
   width: 50%;
+  min-height: 20px;
 }
 
 #players-container {
@@ -214,6 +216,12 @@ h2, p {
   padding: 15px;
   border: none;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+#redoTeams {
+  font-size: 10pt;
+  color: DarkRed;   
   cursor: pointer;
 }
 </style>
