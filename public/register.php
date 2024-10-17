@@ -30,6 +30,7 @@
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAAxuiXlilIFOJWyW"></div>
 
             <button type="submit">Register</button>
         </form>
