@@ -52,7 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($enteredUsername) || empty($enteredPassword)) {
             // Invalid input, handle the error
-            echo "Invalid username or password";
+            echo "<script>
+            alert('Utilisateur ou mot de passe invalide.');
+            window.history.back();
+            </script>";
             exit();
         }
 
@@ -77,7 +80,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // No match found
-        echo "Invalid username or password";
+        echo "<script>
+        alert('Utilisateur ou mot de passe invalide.');
+        window.history.back();
+        </script>";
+        exit();
+    } else {
+        echo "<script>
+        alert('La vérification Cloudflare à échoué! Veuillez ressayer en cochant la case \"Verify you are human\"');
+        window.history.back();
+        </script>";
+        exit();
     }
 
 }

@@ -44,7 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if the password is empty
         if (empty($newPassword)) {
-            echo 'Error: Password cannot be empty.';
+            echo "<script>
+            alert('Le mot de passe ne peut pas être nulle.');
+            window.history.back();
+            </script>";
             exit();
         }
 
@@ -56,7 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->fetch(PDO::FETCH_ASSOC)) {
             // Table already exists, handle the error
-            echo 'User with this username already exists. Please choose a different username.';
+            echo "<script>
+            alert('Un utilisateur avec ce nom existe déjà. Veuillez en choisir un autre.');
+            window.history.back();
+            </script>";
+            exit();
         } else {
             // User doesn't exist, proceed with registration
             try {
@@ -70,7 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':password', $hashPassword, PDO::PARAM_STR);
                 $stmt->execute();
 
-                echo 'User registered successfully!';
+                // echo 'User registered successfully!';
+                echo "<script>
+                alert('Utilisateur inscrit avec succès!');
+                setTimeout(function() {
+                window.location.href = 'index.php';
+                }, 2000);
+                </script>";
             }
             catch (PDOException $e) {
                 // Log or display the error
@@ -85,10 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Wait for 2 seconds
-    sleep(2);
-    // Redirect to index.php
-    header('Location: index.php');
     // Close database connection
     $file_db = null;
 } else {
