@@ -4,6 +4,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require 'openDB.php';
     require "TURNSTILE_SECRET.php";
 
+    // Debugging: Output the entire POST array
+    var_dump($_POST); // Check the contents of the $_POST array
+    exit(); // Temporarily exit to examine the output
+
     // Get the Turnstile token and the user's IP address
     $token = $_POST['cf-turnstile-response'];
     $ip = $_SERVER['REMOTE_ADDR'];
