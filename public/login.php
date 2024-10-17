@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($outcome['success']) {
         // Continue with the login process
         // (e.g., check username and password against your database)
-        echo "captcha turnstile successful";
+        // echo "captcha turnstile successful";
 
         // Sanitize and validate user input
         $enteredUsername = htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8');
