@@ -13,6 +13,8 @@
     <title>Inscription</title>
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
     <!-- Include additional CSS if needed -->
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
 

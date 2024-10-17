@@ -5,8 +5,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require "TURNSTILE_SECRET.php";
 
     // Debugging: Output the entire POST array
-    var_dump($_POST); // Check the contents of the $_POST array
-    exit(); // Temporarily exit to examine the output
+    // var_dump($_POST); // Check the contents of the $_POST array
+    // exit(); // Temporarily exit to examine the output
 
     // Get the Turnstile token and the user's IP address
     $token = $_POST['cf-turnstile-response'];
