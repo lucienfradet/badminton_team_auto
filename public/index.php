@@ -7,6 +7,7 @@
     <title>Badminton Team Builder</title>
     <!-- You can include additional CSS and JavaScript files here -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     
     <style>
       /* styles.css */
@@ -87,20 +88,21 @@
         <!-- Add navigation or other header content here -->
     </header>
 
-    <main>
-        <form action="login.php" method="post">
-          <label for="username">Nom d'utilisateur:</label>
-          <input type="text" id="username" name="username" required>
+        <main>
+            <form action="login.php" method="post">
+                <label for="username">Nom d'utilisateur:</label>
+                <input type="text" id="username" name="username" required>
 
-          <label for="password">Mot de passe:</label>
-          <input type="password" id="password" name="password" required>
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" required>
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAAxuiXlilIFOJWyW"></div>
 
-          <button type="submit">Connexion</button>
-        </form>
+                <button type="submit">Connexion</button>
+            </form>
 
-    </main>
-    <!-- Button to navigate to the registration page -->
-    <!-- <a href="register.php"><button>Register</button></a> -->
+        </main>
+        <!-- Button to navigate to the registration page -->
+        <!-- <a href="register.php"><button>Register</button></a> -->
 
     <!-- disabled version of the button -->
     <!-- <a href="register.php"><button disabled>Register</button></a> -->
