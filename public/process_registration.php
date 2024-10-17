@@ -77,8 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo 'Error registering user: ' . $e->getMessage();
             }
         }
+    } else {
+        echo "<script>
+            alert('La vérification Cloudflare à échoué! Veuillez ressayer en cochant la case \"Verify you are human\"');
+            window.history.back();
+        </script>";
+        exit();
     }
 
+    // Wait for 2 seconds
+    sleep(2);
+    // Redirect to index.php
+    header('Location: index.php');
     // Close database connection
     $file_db = null;
 } else {
