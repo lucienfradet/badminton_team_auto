@@ -109,7 +109,6 @@
     </main>
 
         <!-- Include your script(s) -->
-        <script src="js/script.js"></script>
         <script>
         $(document).ready(function() {
             $('#registration-form').on('submit', function(event) {
