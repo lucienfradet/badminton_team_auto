@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Ruleset">
+    <rule ref="PEAR">
+        <!-- Ignore all PEAR commenting rules -->
+        <exclude name="PEAR.Commenting"/>
+    </rule>
+</ruleset>

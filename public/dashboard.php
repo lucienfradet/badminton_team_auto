@@ -1,6 +1,6 @@
 <?php
 session_start();
-require('openDB.php');
+require 'openDB.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['username']) || !isset($_SESSION['table'])) {
@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addPlayer'])) {
             $newPlayerLevel = filter_var($_POST['playerLevel'], FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 10)));
 
             if ($newPlayerLevel === false) {
-                // Invalid playerLevel, handle the error (e.g., display an error message or log it)
+                // Invalid playerLevel, handle the Error
+                // (e.g., display an error message or log it)
                 echo 'Invalid playerLevel. Please enter a number between 1 and 10.';
                 exit();
             }
@@ -78,7 +79,7 @@ $file_db = null; // Close database connection
 
         <!-- CSS stylesheet(s) -->
         <!-- <link rel="stylesheet" type="text/css" href="css/style.css" /> -->
-        <?php include 'style_css.php'; ?>
+        <?php require 'style_css.php'; ?>
     </head>
     <body>
         <div id="dashboard-container">
@@ -159,6 +160,6 @@ $file_db = null; // Close database connection
     </body>
     <!-- My script(s) -->
     <!-- <script src="script.js"></script> -->
-    <?php include 'script_js.php'; ?>
+    <?php require 'script_js.php'; ?>
 
 </html>

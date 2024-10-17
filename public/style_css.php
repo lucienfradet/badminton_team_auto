@@ -224,4 +224,16 @@ h2, p {
   color: DarkRed;   
   cursor: pointer;
 }
+
+.select-deselect-all {
+    display: flex;               /* Use flexbox */
+    justify-content: center;      /* Center the buttons horizontally */
+    align-items: center;          /* Center the buttons vertically */
+    width: 100%;                  /* Make the div take up the full width */
+    padding: 10px 0;              /* Optional padding for spacing */
+}
+
+.select-deselect-all button {
+    margin: 0 10px;               /* Optional: Add spacing between the buttons */
+}
 </style>

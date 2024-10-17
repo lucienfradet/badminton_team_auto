@@ -177,6 +177,24 @@ $(document).ready(function() {
                 });
 
                 countActivePlayers();
+                // add control buttons
+                let controlButtonsDiv = `
+                    <div class="select-deselect-all">
+                    <button id="selectAllPlayers">Sélectionner Tous</button>
+                    <button id="deselectAllPlayers">Désélectionner Tous</button>
+                    </div>
+                    `;
+                $('#players-container').append(controlButtonsDiv);
+
+                // Bind events to the control buttons
+                $('#selectAllPlayers').on('click', function() {
+                    $('.inactive-checkbox').prop('checked', true).trigger('change');
+                });
+
+                $('#deselectAllPlayers').on('click', function() {
+                    $('.inactive-checkbox').prop('checked', false).trigger('change');
+                });
+
             } else {
                 console.error('Invalid response format. Expected an array.');
             }
@@ -230,9 +248,10 @@ $(document).ready(function() {
             data: formData,
             success: function (response) {
                 // Display the response in the teams-container div
-                $("#session-active-flag").text("OUI!"); 
-                $('#session-active-flag').css('color', 'green');
-                console.log(response);
+                // $("#session-active-flag").text("OUI!"); 
+                // $('#session-active-flag').css('color', 'green');
+                // console.log(response);
+                checkSessionState();
 
                 // Clear the existing content in teams-container
                 $("#teams-container").empty();
@@ -298,21 +317,25 @@ $(document).ready(function() {
         });
     });
 
+    function checkSessionState() {
+        $.ajax({
+            type: "POST",
+            url: "checkSessionState.php",
+            success: function (response) {
+                console.log(response);
+                // Update button text based on the visibility state
+                let flagText = response['isEmpty'] ? 'Aucune' : 'OUI';
+                $('#session-active-flag').text(flagText);
+                flagText === 'Aucune' ? $('#session-active-flag').css('color', 'red') : $('#session-active-flag').css('color', 'green');
+            },
+            error: function (error) {
+                console.log("Error:", error);
+            }
+        });
+    }
+
     //check session state on page load
-    $.ajax({
-        type: "POST",
-        url: "checkSessionState.php",
-        success: function (response) {
-            console.log(response);
-            // Update button text based on the visibility state
-            let flagText = response['isEmpty'] ? 'Aucune' : 'OUI';
-            $('#session-active-flag').text(flagText);
-            flagText === 'Aucune' ? $('#session-active-flag').css('color', 'red') : $('#session-active-flag').css('color', 'green');
-        },
-        error: function (error) {
-            console.log("Error:", error);
-        }
-    });
+    checkSessionState();
 
     function checkBalanceTeamSwitch() {
         let algorithm = $('input[name="algorithm"]:checked').val();
