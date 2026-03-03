@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Execute the request
     $response = curl_exec($ch);
-    curl_close($ch);
 
     // Decode the response
     $outcome = json_decode($response, true);
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Sanitize and validate user input
         $enteredUsername = htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8');
-        $enteredPassword = htmlspecialchars($_POST['password'], ENT_QUOTES, 'UTF-8');
+        $enteredPassword = $_POST['password']; // raw, don't touch it
 
         if (empty($enteredUsername) || empty($enteredPassword)) {
             // Invalid input, handle the error
@@ -69,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // User exists, now check the hashed password
             if (password_verify($enteredPassword, $row['password'])) {
                 // Match found, start session
+                session_regenerate_id(true);
                 $_SESSION['username'] = $enteredUsername;
                 $_SESSION['table'] = $enteredUsername;
                 ob_start();
