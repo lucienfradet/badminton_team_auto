@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Sanitize and validate user input
         $enteredUsername = htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8');
-        $enteredPassword = $_POST['password']; // raw, don't touch it
+        $enteredPassword = $_POST['password'];
 
         if (empty($enteredUsername) || empty($enteredPassword)) {
             // Invalid input, handle the error

@@ -9,6 +9,15 @@
 
 let playerData = [];
 
+function handleAjaxError(jqXHR, textStatus, errorThrown) {
+    if (jqXHR.status === 401) {
+        window.location.href = 'index.php';
+        return true; // handled
+    }
+    console.error('Request failed:', textStatus, errorThrown, jqXHR.responseText);
+    return false;
+}
+
 $(document).ready(function() {
     // Toggle the visibility of the form on button click
     $('#toggleAddPlayerForm').on('click', function() {
@@ -47,7 +56,7 @@ $(document).ready(function() {
 
     // Perform AJAX request to fetch players
     $.ajax({
-        url: 'fetch_players.php',
+    url: 'fetch_players.php',
         method: 'POST',
         dataType: 'json',
         success: function(players) {
@@ -59,7 +68,7 @@ $(document).ready(function() {
                     playerDiv += '<p class="player-container-p"><strong>' + player.name + '</strong></p>';
                     playerDiv += '<p class="player-container-p">Nv: ' + player.level + '</p>';
                     let checked = ""
-                    player.active ? checked = "checked" : checked = "";
+                        player.active ? checked = "checked" : checked = "";
                     playerDiv += '<input type="checkbox" class="inactive-checkbox" data-player-id="' + player.id + '" ' + checked + '> Présent';
                     playerDiv += '<button class="modify-player" data-player-id="' + player.id + '">Modifier</button>';            
                     playerDiv += '<button class="delete-player" data-player-id="' + player.id + '">Supprimer</button>';
@@ -76,7 +85,7 @@ $(document).ready(function() {
 
                     // Perform AJAX request to set player as inactive
                     $.ajax({
-                        url: 'set_inactive.php',
+                    url: 'set_inactive.php',
                         method: 'POST',
                         data: { playerId: playerId, active: isChecked },
                         success: function(response) {
@@ -84,12 +93,8 @@ $(document).ready(function() {
                             console.log('Player state updated successfully');
                             console.log(response);
                         },
-                        error: function(error) {
-                            // Handle error
-                            console.error('Error updating player state:', error);
-                        }
+                        error: handleAjaxError
                     });
-
                     countActivePlayers();
                 });
 
@@ -102,7 +107,7 @@ $(document).ready(function() {
 
                     // Perform AJAX request to delete player
                     $.ajax({
-                        url: 'delete_player.php',
+                    url: 'delete_player.php',
                         method: 'POST',
                         data: { playerId: playerIdToDelete },
                         success: function(response) {
@@ -110,10 +115,7 @@ $(document).ready(function() {
                             console.log('Player deleted successfully');
                             clickedButton.parent('.player-container').remove();
                         },
-                        error: function(error) {
-                            // Handle error
-                            console.error('Error deleting player:', error);
-                        }
+                        error: handleAjaxError                    
                     });
                 });
 
@@ -124,10 +126,10 @@ $(document).ready(function() {
                     let playerName = playerDiv.find('p:first').text();
                     let playerLevelString = playerDiv.find('p:eq(1)').text();
                     const levelRegex = /\d+/
-                    const match = playerLevelString.match(levelRegex);
+                        const match = playerLevelString.match(levelRegex);
                     let playerLevel
-                    if (match) {
-                        playerLevel = match[0];
+                        if (match) {
+                            playerLevel = match[0];
                     }
                     else {
                         playerLevel = "NULL";
@@ -138,7 +140,7 @@ $(document).ready(function() {
 
                     //replace by form with same values
                     let playerForm = `
-<form class="modify-player-form" action="" method="post">
+                        <form class="modify-player-form" action="" method="post">
 <input type="text" id="playerName" class="modify-player-input" name="playerName" value=${playerName} required>
 <input type="number" id="playerLevel" class="modify-player-input" name="playerLevel" min="1" max="10" value=${playerLevel} required>
 
@@ -157,7 +159,7 @@ $(document).ready(function() {
 
                         // Perform AJAX request to delete player
                         $.ajax({
-                            url: 'modify_player.php',
+                        url: 'modify_player.php',
                             method: 'POST',
                             data: { playerId: playerId, name: playerName, level: playerLevel },
                             success: function(response) {
@@ -166,14 +168,9 @@ $(document).ready(function() {
                                 console.log('Player modified successfully');
                                 location.reload(true);
                             },
-                            error: function(error) {
-                                // Handle error
-                                console.error('Error modifying player:', error);
-                            }
+                            error: handleAjaxError                        
                         });
-
                     });
-
                 });
 
                 countActivePlayers();
@@ -199,10 +196,7 @@ $(document).ready(function() {
                 console.error('Invalid response format. Expected an array.');
             }
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error fetching players:', textStatus, errorThrown);
-            console.log(jqXHR.responseText); // Log the full responseText
-        }
+        error: handleAjaxError    
     });
 
     function countActivePlayers() {
@@ -291,9 +285,7 @@ $(document).ready(function() {
                 });
 
             },
-            error: function (error) {
-                console.log("Error:", error);
-            }
+            error: handleAjaxError                    
         });
     }
 
@@ -311,9 +303,7 @@ $(document).ready(function() {
                 $('#session-active-flag').css('color', 'red');
                 $("#teams-container").removeData();
             },
-            error: function (error) {
-                console.log("Error:", error);
-            }
+            error: handleAjaxError                    
         });
     });
 
@@ -328,9 +318,7 @@ $(document).ready(function() {
                 $('#session-active-flag').text(flagText);
                 flagText === 'Aucune' ? $('#session-active-flag').css('color', 'red') : $('#session-active-flag').css('color', 'green');
             },
-            error: function (error) {
-                console.log("Error:", error);
-            }
+            error: handleAjaxError                    
         });
     }
 
@@ -368,9 +356,7 @@ $(document).ready(function() {
             success: function (response) {
                 console.log('Algorithm selection updated successfully');
             },
-            error: function (error) {
-                console.log('Error updating algorithm selection:', error);
-            }
+            error: handleAjaxError                    
         });
     });
 
@@ -386,9 +372,7 @@ $(document).ready(function() {
             success: function (response) {
                 console.log('numCourts selection updated successfully');
             },
-            error: function (error) {
-                console.log('Error updating numCourts selection:', error);
-            }
+            error: handleAjaxError                    
         });
     });
 
@@ -405,9 +389,7 @@ $(document).ready(function() {
             }
             checkBalanceTeamSwitch();
         },
-        error: function (error) {
-            console.log('Error fetching algorithm selection:', error);
-        }
+        error: handleAjaxError                    
     });
 
     // Fetch current numCourts selection on page load
@@ -418,9 +400,7 @@ $(document).ready(function() {
             // update the numCourts
             $('#numCourts').val(response.numCourts);
         },
-        error: function (error) {
-            console.log('Error fetching numCourts selection:', error);
-        }
+        error: handleAjaxError                    
     });
 
 });

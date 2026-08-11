@@ -7,7 +7,9 @@ require('openDB.php');
 
 // Check if the user is logged in
 if (!isset($_SESSION['username']) || !isset($_SESSION['table'])) {
-    header('Location: index.php'); // Redirect to the login page if not logged in
+    http_response_code(401);
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'User not authenticated']);
     exit();
 }
 
