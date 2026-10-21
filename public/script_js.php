@@ -47,7 +47,7 @@ $(document).ready(function() {
         //hide players
         if ($('#teams-container').is(':visible')) {
             $('#players-container').hide();
-            $('#togglePlayerList').text('Show Player List');
+            $('#togglePlayerList').text('Afficher les joueurs');
         }
     });
 
