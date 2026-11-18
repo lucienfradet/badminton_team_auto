@@ -1,14 +1,6 @@
 <?php
-session_start();
+require 'auth_check.php';
 require('openDB.php');
-
-// Check if the user is logged in
-if (!isset($_SESSION['username']) || !isset($_SESSION['table'])) {
-    http_response_code(401);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'User not authenticated']);
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['playerId']) && isset($_POST['active'])) {
     try {

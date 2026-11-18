@@ -1,15 +1,6 @@
 <?php
-// Include the database connection file
+require 'auth_check.php';
 require('openDB.php');
-
-session_start();
-
-if (!isset($_SESSION['username']) || !isset($_SESSION['table'])) {
-    http_response_code(401);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'User not authenticated']);
-    exit();
-}
 
 $username = $_SESSION['username'];
 $tablename = $_SESSION['table'];

@@ -1,5 +1,5 @@
 <?php
-session_start();
+require 'auth_check.php';
 require('openDB.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,8 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
         echo json_encode($players);
     } catch (PDOException $e) {
-        // Log or display the error
-        echo 'Error fetching players in query: ' . $e->getMessage();
+        header('Content-Type: application/json');
+        http_response_code(500); // Set error status code
+        // Log the real error to a file, but send a clean message to user
+        echo json_encode(['error' => 'Database error occurred']); 
     }
 }
 ?>

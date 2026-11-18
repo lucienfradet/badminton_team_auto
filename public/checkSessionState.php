@@ -1,50 +1,46 @@
 <?php
-session_start();
+require 'auth_check.php';
 require('openDB.php');
 
-
-// Check if the user is logged in
-if (!isset($_SESSION['username']) || !isset($_SESSION['table'])) {
-    http_response_code(401);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'User not authenticated']);
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  try {
-    //declare session variables
-    $tablename = $_SESSION['table'];
-    $username = $_SESSION['username'];
+    try {
+        //declare session variables
+        $tablename = $_SESSION['table'];
+        $username = $_SESSION['username'];
 
-    $queryFetchTeamArray = "
+        $queryFetchTeamArray = "
       SELECT team_array
       FROM users
       WHERE username = :username
     ";
 
-    $stmt = $file_db->prepare($queryFetchTeamArray);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
+        $stmt = $file_db->prepare($queryFetchTeamArray);
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
 
-    $existingTeamArray = $stmt->fetchColumn();
+        $existingTeamArrayRaw = $stmt->fetchColumn();
 
-    $existingTeams = json_decode($existingTeamArray, true);
+        $existingTeams = json_decode($existingTeamArrayRaw ?? '[]', true);
 
-    // Check if $existingTeams is empty
-    $response = empty($existingTeams);
+        if ($existingTeams === null && $existingTeamArrayRaw !== '[]' && $existingTeamArrayRaw !== '') {
+            throw new Exception("Invalid JSON format in database.");
+    }
 
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode([
-      'isEmpty' => $response,
-      'teams' => $existingTeams
+        'isEmpty' => empty($existingTeams),
+        'teams'   => $existingTeams ?: [] // Ensure we always return an array, never null
     ]);
 
-  } catch (PDOException $e) {
-    // Print PDOException message
-    echo "Error: " . $e->getMessage();
-  }
+    } catch (Exception $e) {
+        header('Content-Type: application/json');
+        http_response_code(500); // Internal Server Error
+        echo json_encode([
+            'error' => 'Failed to fetch teams',
+            /* 'details' => $e->getMessage() // Only show this in development! */
+        ]);
+    }
 } else {
     // Handle invalid requests (e.g., direct access to this file)
     echo "Invalid request";
