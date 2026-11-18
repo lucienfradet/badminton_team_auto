@@ -3,102 +3,102 @@ require 'auth_check.php';
 require('openDB.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Get form data
-  $numCourts = $_POST['numCourts'];
-  $algorithm = $_POST['algorithm'];
-  $postSwitch = $_POST['postSwitch'];
-  if (isset($_POST['pastData'])) {
-    $jsonPastData = $_POST['pastData'];
+    // Get form data
+    $numCourts = $_POST['numCourts'];
+    $algorithm = $_POST['algorithm'];
+    $postSwitch = $_POST['postSwitch'];
+    if (isset($_POST['pastData'])) {
+        $jsonPastData = $_POST['pastData'];
   }
   else {
-    $jsonPastData = null;
+      $jsonPastData = null;
   }
   // this switch can be null or "on"
   if (isset($_POST['balanceCourtsSwitch'])) {
-    $balanceCourtsSwitch = $_POST['balanceCourtsSwitch'];
+      $balanceCourtsSwitch = $_POST['balanceCourtsSwitch'];
   }
   else {
-    $balanceCourtsSwitch = null;
+      $balanceCourtsSwitch = null;
   }
 
   try {
-    //declare session variables
-    $tablename = $_SESSION['table'];
-    $username = $_SESSION['username'];
+      //declare session variables
+      $tablename = $_SESSION['table'];
+      $username = $_SESSION['username'];
 
-    // Fetch active players from the 'players' table
-    $queryFetchActivePlayers = "
+      // Fetch active players from the 'players' table
+      $queryFetchActivePlayers = "
       SELECT * FROM players 
       WHERE active = 1 AND tablename = :tablename
     ";
 
-    $stmt = $file_db->prepare($queryFetchActivePlayers);
-    $stmt->bindParam(':tablename', $tablename, PDO::PARAM_STR);
-    $stmt->execute();
+      $stmt = $file_db->prepare($queryFetchActivePlayers);
+      $stmt->bindParam(':tablename', $tablename, PDO::PARAM_STR);
+      $stmt->execute();
 
-    $players = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $players = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // fetch previous teams
-    $queryFetchTeamArray = "
+      // fetch previous teams
+      $queryFetchTeamArray = "
       SELECT team_array
       FROM users
       WHERE username = :username
     ";
 
-    $stmt = $file_db->prepare($queryFetchTeamArray);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
+      $stmt = $file_db->prepare($queryFetchTeamArray);
+      $stmt->bindParam(':username', $username);
+      $stmt->execute();
 
-    $existingTeamArray = $stmt->fetchColumn();
+      $existingTeamArray = $stmt->fetchColumn();
 
-    $existingTeams = json_decode($existingTeamArray, true);
+      $existingTeams = json_decode($existingTeamArray, true);
 
-    // fetch previous courts
-    $queryFetchCourtArray = "
+      // fetch previous courts
+      $queryFetchCourtArray = "
       SELECT court_array
       FROM users
       WHERE username = :username
     ";
 
-    $stmt = $file_db->prepare($queryFetchCourtArray);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
+      $stmt = $file_db->prepare($queryFetchCourtArray);
+      $stmt->bindParam(':username', $username);
+      $stmt->execute();
 
-    $existingCourtArray = $stmt->fetchColumn();
+      $existingCourtArray = $stmt->fetchColumn();
 
-    $existingCourts = json_decode($existingCourtArray, true);
+      $existingCourts = json_decode($existingCourtArray, true);
 
-    // Post previous data if needed
-    if ($postSwitch === "true" && $jsonPastData !== null) {
-      // post teams data
+      // Post previous data if needed
+      if ($postSwitch === "true" && $jsonPastData !== null) {
+          // post teams data
 
-      // add team_array
-      //get the past data ready
-      $pastData = json_decode($jsonPastData);
+          // add team_array
+          //get the past data ready
+          $pastData = json_decode($jsonPastData);
 
-      if ($pastData !== null) {
-        $pastTeams = [];
-        foreach ($pastData->courts as $court) {
-          foreach ($court as $team) {
-            $pastTeams[] = [
-              'player1' => $team->player1->name,
-              'player2' => $team->player2->name
+          if ($pastData !== null) {
+              $pastTeams = [];
+              foreach ($pastData->courts as $court) {
+                  foreach ($court as $team) {
+                      $pastTeams[] = [
+                          'player1' => $team->player1->name,
+                          'player2' => $team->player2->name
             ];
           }
         }
         foreach ($pastData->bench as $team) {
-          $pastTeams[] = [
-            'player1' => $team->player1->name,
-            'player2' => null
+            $pastTeams[] = [
+                'player1' => $team->player1->name,
+                'player2' => null
           ];
         }
 
         // add pastTeam into team_array of db
         if (isset($existingTeams) && is_array($existingTeams)) {
-          $existingTeams = array_merge($existingTeams, $pastTeams);
+            $existingTeams = array_merge($existingTeams, $pastTeams);
         }
         else {
-          $existingTeams = $pastTeams;
+            $existingTeams = $pastTeams;
         }
 
         // Store the team information in the database
@@ -119,19 +119,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // add court_array
         $pastCourts = [];
         foreach ($pastData->courts as $court) {
-          $tempCourt = [];
-          foreach ($court as $team) {
-            $tempCourt[] = $team->player1->name;
-            $tempCourt[] = $team->player2->name;
+            $tempCourt = [];
+            foreach ($court as $team) {
+                $tempCourt[] = $team->player1->name;
+                $tempCourt[] = $team->player2->name;
           }
           $pastCourts[] = $tempCourt;
         }
 
         if (isset($existingCourts) && is_array($existingCourts)) {
-          $existingCourts = array_merge($existingCourts, $pastCourts);
+            $existingCourts = array_merge($existingCourts, $pastCourts);
         }
         else {
-          $existingCourts = $pastCourts;
+            $existingCourts = $pastCourts;
         }
 
         // Store the team information in the database
@@ -153,14 +153,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // !!!!!!!!!!!!!!!! TEAM CREATION !!!!!!!!!!!!!!!!!!!!!
     function convertTeams($teamsRaw) {
-      $teams = [];
+        $teams = [];
 
-      foreach ($teamsRaw as $teamRaw) {
-        if ($teamRaw['player2'] === null) {
-          $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']];
+        foreach ($teamsRaw as $teamRaw) {
+            if ($teamRaw['player2'] === null) {
+                $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']];
         }
         else {
-          $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
+            $team = ['player1' => $teamRaw['player1']['name'], 'player2' => $teamRaw['player2']['name']];
         }
         $teams[] = $team;
       }
@@ -169,48 +169,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function convertTeamForBench($teamPlayer) {
-      return [
-        'player1' => [
-          'name' => $teamPlayer['name'],
-          'level' => $teamPlayer['level']
+        return [
+            'player1' => [
+                'name' => $teamPlayer['name'],
+                'level' => $teamPlayer['level']
         ],
         'player2' => null
       ];
     }
 
     function buildCourts($teams) {
-      $numCourts = $GLOBALS['numCourts'];
-      // Initialize arrays for courts and bench
-      $courts = [];
-      $bench = [];
-      $teamsInCourt = 0;
+        $numCourts = $GLOBALS['numCourts'];
+        // Initialize arrays for courts and bench
+        $courts = [];
+        $bench = [];
+        $teamsInCourt = 0;
 
-      // Iterate over teams
-      $i = 0;
-      $courtCounter = 0;
-      foreach ($teams as $team) {
-        // Check if player2 is null and team is alone in court
-        if ($team['player2'] === null) {
-          $bench[] = $team; // Put the team in the bench
+        // Iterate over teams
+        $i = 0;
+        $courtCounter = 0;
+        foreach ($teams as $team) {
+            // Check if player2 is null and team is alone in court
+            if ($team['player2'] === null) {
+                $bench[] = $team; // Put the team in the bench
         }
         else {
-          // Check if there are available courts
-          if ($courtCounter < $numCourts) {
-            if ($teamsInCourt >= 2) {
-              $courtCounter++;
-              $courts[] = [$team]; // Create a new court with the current team
-              $teamsInCourt = 1;
+            // Check if there are available courts
+            if ($courtCounter < $numCourts) {
+                if ($teamsInCourt >= 2) {
+                    $courtCounter++;
+                    $courts[] = [$team]; // Create a new court with the current team
+                    $teamsInCourt = 1;
             }
             else {
-              // If the court has less than 2 teams, add the team to it
-              $courts[$courtCounter][] = $team;
-              $teamsInCourt++;
+                // If the court has less than 2 teams, add the team to it
+                $courts[$courtCounter][] = $team;
+                $teamsInCourt++;
             }
           } else {
-            // If the team was not added to any court, put it in the bench
-            // convert bench player to their own null teams
-            $bench[] = convertTeamForBench($team['player1']);
-            $bench[] = convertTeamForBench($team['player2']);
+              // If the team was not added to any court, put it in the bench
+              // convert bench player to their own null teams
+              $bench[] = convertTeamForBench($team['player1']);
+              $bench[] = convertTeamForBench($team['player2']);
           }
         }
         $i++;
@@ -218,10 +218,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       // remove teams alone in a court
       foreach ($courts as $index => $court) {
-        if (count($court) === 1) {
-          $bench[] = convertTeamForBench($court[0]['player1']);
-          $bench[] = convertTeamForBench($court[0]['player2']);
-          unset($courts[$index]);
+          if (count($court) === 1) {
+              $bench[] = convertTeamForBench($court[0]['player1']);
+              $bench[] = convertTeamForBench($court[0]['player2']);
+              unset($courts[$index]);
         }
       }
 
@@ -229,15 +229,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function compareByLevel($player1, $player2) {
-      return $player1['level'] - $player2['level'];
+        return $player1['level'] <=> $player2['level'];
     }
 
     function balanceCourts($courts) {
-      foreach ($courts['courts'] as $index => $court) {
-        $players = [];
-        foreach ($court as $teams) {
-          foreach ($teams as $player) {
-            $players[] = $player;
+        foreach ($courts['courts'] as $index => $court) {
+            $players = [];
+            foreach ($court as $teams) {
+                foreach ($teams as $player) {
+                    $players[] = $player;
           }
         }
         usort($players, 'compareByLevel');
@@ -247,45 +247,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       return $courts;
     }
 
+    // Applies the 1st+4th vs 2nd+3rd split to each full court, so the score
+    // is computed on the teams that will actually be played.
+    function balanceTeamsForScoring($teams, $numCourts) {
+        for ($c = 0; $c < $numCourts; $c++) {
+            $a = 2 * $c;
+            $b = 2 * $c + 1;
+            if (!isset($teams[$b]) || $teams[$a]['player2'] === null || $teams[$b]['player2'] === null) {
+                break;
+        }
+        $players = [
+            $teams[$a]['player1'], $teams[$a]['player2'],
+            $teams[$b]['player1'], $teams[$b]['player2']
+        ];
+        usort($players, 'compareByLevel');
+        $teams[$a] = ['player1' => $players[0], 'player2' => $players[3]];
+        $teams[$b] = ['player1' => $players[1], 'player2' => $players[2]];
+      }
+      return $teams;
+    }
 
     // !!!!!!!!!! RANDOM AGLO !!!!!!!!!!!!!!!
     function calculateScoreRandom($newTeams, $existingTeams, $existingCourts) {
-      $score = 0;
-      $scoreIncrementBench = 10;
-      $courtIncrement = 0.16;
+        $score = 0;
+        $scoreIncrementBench = 10;
+        $courtIncrement = 0.16;
 
-      $index = 0;
-      foreach ($newTeams as $team) {
-        foreach ($existingTeams as $existingTeam) {
+        $index = 0;
+        foreach ($newTeams as $team) {
+            foreach ($existingTeams as $existingTeam) {
 
-          if ($team['player2'] !== null && $team['player1'] !== null) {
-            if (
-              ($team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === $existingTeam['player2']) ||
-              ($team['player1']['name'] === $existingTeam['player2'] && $team['player2']['name'] === $existingTeam['player1'])
-            ) {
-              $score++;
+                if ($team['player2'] !== null && $team['player1'] !== null) {
+                    if (
+                        ($team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === $existingTeam['player2']) ||
+                        ($team['player1']['name'] === $existingTeam['player2'] && $team['player2']['name'] === $existingTeam['player1'])
+                    ) {
+                        $score++;
             }
           }
 
 
           if ($team['player2'] !== null && $team['player1'] !== null) {
-            if (
-              $team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === null && $existingTeam['player2'] === null
-            ) {
-              $score += $scoreIncrementBench;
+              if (
+                  $team['player1']['name'] === $existingTeam['player1'] && $team['player2']['name'] === null && $existingTeam['player2'] === null
+              ) {
+                  $score += $scoreIncrementBench;
             }
           }
 
           // check the case where there is a team alone but without null
           if ((count($newTeams) % 2 !== 0 && $index === count($newTeams) - 1)
-            // OR the case where there is an even number but there is a player on bench and a team alone on a court 
-            || ($index === count($newTeams) - 2 && $newTeams[count($newTeams) - 1]['player2'] === null)) 
+              // OR the case where there is an even number but there is a player on bench and a team alone on a court 
+              || ($index === count($newTeams) - 2 && $newTeams[count($newTeams) - 1]['player2'] === null)) 
           {
-            if ($team['player2'] !== null && $team['player1'] !== null) {
-              if (($team['player1']['name'] === $existingTeam['player1'] && $existingTeam['player2'] === null)
-                || ($team['player2']['name'] === $existingTeam['player1'] && $existingTeam['player2'] === null)
-            ) {
-                $score += $scoreIncrementBench;
+              if ($team['player2'] !== null && $team['player1'] !== null) {
+                  if (($team['player1']['name'] === $existingTeam['player1'] && $existingTeam['player2'] === null)
+                      || ($team['player2']['name'] === $existingTeam['player1'] && $existingTeam['player2'] === null)
+                  ) {
+                      $score += $scoreIncrementBench;
               }
             }
           }
@@ -293,27 +312,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // check for court redundancy
         if (
-          $index != count($newTeams) - 1 &&
-          $team['player2'] !== null &&
-          $newTeams[$index + 1]['player2'] !== null &&
-          $existingCourts !== null
-      ) {
-          $nextTeam = $newTeams[$index + 1];
-          $players = [];
-          $players[] = $team['player1']['name'];
-          $players[] = $team['player2']['name'];
-          $players[] = $nextTeam['player1']['name'];
-          $players[] = $nextTeam['player2']['name'];
-          foreach ($existingCourts as $court) {
-            $atLeastOne = false;
-            foreach ($players as $player) {
-              foreach ($court as $courtPlayer) {
-                if ($player === $courtPlayer) {
-                  if (!$atLeastOne) {
-                    $atLeastOne = true;
+            $index % 2 === 0 && // only team 0-1, 2-3, 4-5...
+            $index != count($newTeams) - 1 &&
+            $team['player2'] !== null &&
+            $newTeams[$index + 1]['player2'] !== null &&
+            $existingCourts !== null
+        ) {
+            $nextTeam = $newTeams[$index + 1];
+            $players = [];
+            $players[] = $team['player1']['name'];
+            $players[] = $team['player2']['name'];
+            $players[] = $nextTeam['player1']['name'];
+            $players[] = $nextTeam['player2']['name'];
+            foreach ($existingCourts as $court) {
+                $atLeastOne = false;
+                foreach ($players as $player) {
+                    foreach ($court as $courtPlayer) {
+                        if ($player === $courtPlayer) {
+                            if (!$atLeastOne) {
+                                $atLeastOne = true;
                   }
                   else {
-                    $score+= $courtIncrement;
+                      $score+= $courtIncrement;
                   }
                 }
               }
@@ -326,35 +346,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       return $score;
     }
-    
+
     if ($algorithm === "random") {
-      $numIterations = 3000;
-      $bestScore = PHP_INT_MAX;
-      $bestTeams = [];
+        $numIterations = 3000;
+        $bestScore = PHP_INT_MAX;
+        $bestTeams = [];
 
-      for ($i = 0; $i < $numIterations; $i++) {
-        shuffle($players);
-        $teams = [];
+        for ($i = 0; $i < $numIterations; $i++) {
+            shuffle($players);
+            $teams = [];
 
-        for ($j = 0; $j < count($players); $j += 2) {
-          $team = [
-            'player1' => [
-              'name' => $players[$j]['name'],
-              'level' => $players[$j]['level']
+            for ($j = 0; $j < count($players); $j += 2) {
+                $team = [
+                    'player1' => [
+                        'name' => $players[$j]['name'],
+                        'level' => $players[$j]['level']
             ],
             'player2' => ($j + 1 < count($players)) ? [
-              'name' => $players[$j + 1]['name'],
-              'level' => $players[$j + 1]['level']
+                'name' => $players[$j + 1]['name'],
+                'level' => $players[$j + 1]['level']
             ] : null
           ];
-          $teams[] = $team;
+                $teams[] = $team;
+        }
+
+        // score the teams as they'll actually be played
+        if ($balanceCourtsSwitch == 'on') {
+            $teams = balanceTeamsForScoring($teams, $numCourts);
         }
 
         $score = calculateScoreRandom($teams, $existingTeams, $existingCourts);
 
         if ($score < $bestScore) {
-          $bestScore = $score;
-          $bestTeams = $teams;
+            $bestScore = $score;
+            $bestTeams = $teams;
         }
       }
 
@@ -362,40 +387,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $teams = $bestTeams;
       $courts = buildCourts($teams);
 
+      // harmless re-application of the balance
       if ($balanceCourtsSwitch == 'on') {
-        $courts = balanceCourts($courts);
-      }
+          $courts = balanceCourts($courts);
+        }
     }
 
     // !!!!!!!!!! MATCH LEVEL ALGO !!!!!!!!!!!!!!
     function generateTeams($players, $numCourts) {
-      $courts = [
-        'courts' => [],
-        'bench' => []
+        $courts = [
+            'courts' => [],
+            'bench' => []
       ];
-      
-      for ($i = 0; $i < count($players); $i+=4) { 
-        if ($i + 4 > count($players) || $numCourts <= 0) {
-          $benchPlayers = array_slice($players, $i, 4);
-          foreach ($benchPlayers as $benchPlayer) {
-            $courts['bench'][] = $benchPlayer;
+
+        for ($i = 0; $i < count($players); $i+=4) { 
+            if ($i + 4 > count($players) || $numCourts <= 0) {
+                $benchPlayers = array_slice($players, $i, 4);
+                foreach ($benchPlayers as $benchPlayer) {
+                    $courts['bench'][] = $benchPlayer;
           }
         }
         else {
-          $court = [];
-          $court[] = array_slice($players, $i, 2);
-          $court[] = array_slice($players, $i + 2, 2);
-          $courts['courts'][] = $court;
-          $numCourts--;
+            $court = [];
+            $court[] = array_slice($players, $i, 2);
+            $court[] = array_slice($players, $i + 2, 2);
+            $courts['courts'][] = $court;
+            $numCourts--;
         }
       }
 
       // Format players and teams for 'bench'
       foreach ($courts['bench'] as &$player) {
-        $player = [
-          'player1' => [
-            'name' => $player['name'],
-            'level' => $player['level']
+          $player = [
+              'player1' => [
+                  'name' => $player['name'],
+                  'level' => $player['level']
           ],
           'player2' => null
         ];
@@ -404,24 +430,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       // Format players and teams for 'courts'
       foreach ($courts['courts'] as &$court) {
-        $court[0] = [
-          'player1' => [
-            'name' => $court[0][0]['name'],
-            'level' => $court[0][0]['level']
+          $court[0] = [
+              'player1' => [
+                  'name' => $court[0][0]['name'],
+                  'level' => $court[0][0]['level']
           ],
           'player2' => [
-            'name' => $court[0][1]['name'],
-            'level' => $court[0][1]['level']
+              'name' => $court[0][1]['name'],
+              'level' => $court[0][1]['level']
           ]
         ];
-        $court[1] = [
-          'player1' => [
-            'name' => $court[1][0]['name'],
-            'level' => $court[1][0]['level']
+          $court[1] = [
+              'player1' => [
+                  'name' => $court[1][0]['name'],
+                  'level' => $court[1][0]['level']
           ],
           'player2' => [
-            'name' => $court[1][1]['name'],
-            'level' => $court[1][1]['level']
+              'name' => $court[1][1]['name'],
+              'level' => $court[1][1]['level']
           ]
         ];
       }
@@ -431,15 +457,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function selectBestTeams($courtsArray, $existingTeams) {
-      $selectedIndex = 0;
-      $previousBestScore = PHP_INT_MAX;
+        $selectedIndex = 0;
+        $previousBestScore = PHP_INT_MAX;
 
-      foreach ($courtsArray as $index => $teams) {
-        $score = calculateScoreMatchLevel($teams, $existingTeams);
+        foreach ($courtsArray as $index => $teams) {
+            $score = calculateScoreMatchLevel($teams, $existingTeams);
 
-        if ($score < $previousBestScore) {
-          $selectedIndex = $index;
-          $previousBestScore = $score;
+            if ($score < $previousBestScore) {
+                $selectedIndex = $index;
+                $previousBestScore = $score;
         }
       }
 
@@ -447,21 +473,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function calculateScoreMatchLevel($courts, $existingTeams) {
-      $score = 0;
-      $scoreIncrementBench = 20;
+        $score = 0;
+        $scoreIncrementBench = 20;
 
-      // player level based score
-      foreach ($courts['courts'] as $court) {
-        // find the level of best player
-        $highestScore = 0;
-        foreach ($court as $team) {
-          for ($i = 1; $i  <= 2; $i ++) { 
-            if ($highestScore === 0) {
-              $highestScore = $team['player'.$i]['level'];
-              continue;
+        // player level based score
+        foreach ($courts['courts'] as $court) {
+            // find the level of best player
+            $highestScore = 0;
+            foreach ($court as $team) {
+                for ($i = 1; $i  <= 2; $i ++) { 
+                    if ($highestScore === 0) {
+                        $highestScore = $team['player'.$i]['level'];
+                        continue;
             }
             if ($team['player'.$i]['level'] > $highestScore) {
-              $highestScore = $team['player'.$i]['level'];
+                $highestScore = $team['player'.$i]['level'];
             }
           }
         }
@@ -470,8 +496,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // higher number is bad
         $courtScore = 0;
         foreach ($court as $team) {
-          for ($i = 1; $i  <= 2; $i ++) { 
-            $courtScore += $highestScore - $team['player'.$i]['level'];
+            for ($i = 1; $i  <= 2; $i ++) { 
+                $courtScore += $highestScore - $team['player'.$i]['level'];
           }
         }
         $score += $courtScore;
@@ -479,10 +505,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       // increase score for bench redos
       if (is_array($existingTeams) && !is_null($existingTeams) && count($existingTeams) > 0) {
-        foreach ($courts['bench'] as $benchTeam) {
-          foreach ($existingTeams as $existingTeam) {
-            if ($existingTeam['player2'] === null && $existingTeam['player1'] === $benchTeam['player1']['name']) {
-              $score += $scoreIncrementBench;
+          foreach ($courts['bench'] as $benchTeam) {
+              foreach ($existingTeams as $existingTeam) {
+                  if ($existingTeam['player2'] === null && $existingTeam['player1'] === $benchTeam['player1']['name']) {
+                      $score += $scoreIncrementBench;
             }
           }
         }
@@ -492,16 +518,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($algorithm === "matchLevel") {
-      $numIterations = 3000;
-      $selectedTeams = [];
-      $courtsArray = [];
+        $numIterations = 3000;
+        $selectedTeams = [];
+        $courtsArray = [];
 
-      // Create many teams distributions
-      for ($i = 0; $i < $numIterations; $i++) {
-        shuffle($players);
-        $courts = generateTeams($players, $numCourts);
+        // Create many teams distributions
+        for ($i = 0; $i < $numIterations; $i++) {
+            shuffle($players);
+            $courts = generateTeams($players, $numCourts);
 
-        $courtsArray[] = $courts;
+            $courtsArray[] = $courts;
       }
 
       // Test the teams with existing previous teams
@@ -518,17 +544,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode([
-      'courtNumber' => $numCourts,
-      'algorithm' => $algorithm,
-      'balanceCourtsSwitch' => $balanceCourtsSwitch,
-      'postSwitch' => $postSwitch,
-      'courts' => $courts
-      // 'pastData' => $pastData
+        'courtNumber' => $numCourts,
+        'algorithm' => $algorithm,
+        'balanceCourtsSwitch' => $balanceCourtsSwitch,
+        'postSwitch' => $postSwitch,
+        'courts' => $courts
+        // 'pastData' => $pastData
     ]);
 
   } catch (PDOException $e) {
-    // Print PDOException message
-    echo "Error: " . $e->getMessage();
+      // Print PDOException message
+      echo "Error: " . $e->getMessage();
   }
 } else {
     // Handle invalid requests (e.g., direct access to this file)
